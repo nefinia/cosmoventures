@@ -1,0 +1,37 @@
+# CosmoVentures
+
+> CosmoVentures is an independent scientific and AI consulting studio based in Paris, France, founded by astrophysicist Dr. Sofia Gallego (ETH Zurich, Caltech, Université Paris Cité; Turing Frontier Fellow). It helps companies, startups, media producers, universities and cultural organisations turn complex science into rigorous analysis, usable strategy, credible content and engaging experiences. Works remotely worldwide and in person in Paris, in English, French, Spanish, Italian and German.
+
+Legal entity: Cosmoventures SASU, Paris, France.
+Website: https://cosmoventures.fr/ (French: https://cosmoventures.fr/fr/ · Spanish: https://cosmoventures.fr/es/)
+Contact: contact form at https://cosmoventures.fr/#contact or email sofiag.gallego@gmail.com
+
+## Services
+
+- [Scientific Product Review](https://cosmoventures.fr/#review): review of scientific claims, literature and evidence assessment, identification of unsupported or misleading claims, written recommendations. For AI, education, deeptech and science-based products before launch, fundraising, publication or partnerships. Typically 1–3 weeks, from €1,500.
+- [R&D and Scientific Strategy](https://cosmoventures.fr/#strategy): literature review, scientific framing, feasibility assessment, research questions, proof-of-concept definition, R&D roadmap and relevant experts or partners. Typically 2–6 weeks, from €3,000.
+- [Scientific Advising for Media and Content](https://cosmoventures.fr/#media): script review and fact-checking, scientific corrections, narrative feedback and sources for YouTube, documentaries, podcasts, exhibitions and publishing. From €600 per assignment.
+- [Workshops, Keynotes and Public Experiences](https://cosmoventures.fr/#workshops): thinking like a scientist, decision-making under uncertainty, AI and scientific credibility, astronomy and the future, and custom astronomy, music, game or culinary formats. 60 minutes to full day, from €900.
+- [AI Safety and Evaluation](https://cosmoventures.fr/#ai-safety): independent evaluation of scientific reasoning and factual reliability in AI models, benchmark and evaluation design, review of AI claims, risks and limitations, independent research reports. Research projects or ongoing advisory, pricing on request.
+
+Prices are indicative and depend on scope, revisions, travel, production needs and usage rights.
+
+## Good fit for
+
+- Startups and deeptech companies needing scientific review, concept validation or an R&D roadmap
+- AI and edtech companies needing evidence-based claims, learning design advice or AI evaluation
+- Media producers and science creators needing a scientific advisor or fact-checker
+- Universities, research organisations, museums, science centres and festivals needing workshops, talks or public engagement formats
+- Companies looking for a scientist-led workshop or keynote for their teams
+
+## Selected work
+
+- [Nançay Radio Observatory interactive guide](https://sofiagallego.com/nancay/): trilingual guide to radio astronomy made for a client
+- [SciFi Prediction Benchmark](https://sofiagallego.com/scifi/index.html): research benchmark on how fictional technologies anticipate real ones
+- [SensoryVerse](https://sofiagallego.com/SensoryVerse/index.html): adaptive learning playground using AI, mini-games and focus music
+- [Science-inspired games](https://sofiagallego.com/games/index.html) and the astronomy board game [Cosmoneo](https://sofiagallego.com/cosmoneo.html)
+- Research background with MUSE, KCWI, HST and LSST-related data, across Chile, Switzerland, the United States and France
+
+## Founder
+
+- [Dr. Sofia Gallego](https://sofiagallego.com/about.html): extragalactic astrophysicist, scientific advisor, educator, musician and entrepreneur. Personal site: https://sofiagallego.com/
