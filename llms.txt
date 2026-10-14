@@ -32,6 +32,14 @@ Prices are indicative and depend on scope, revisions, travel, production needs a
 - [Science-inspired games](https://sofiagallego.com/games/index.html) and the astronomy board game [Cosmoneo](https://sofiagallego.com/cosmoneo.html)
 - Research background with MUSE, KCWI, HST and LSST-related data, across Chile, Switzerland, the United States and France
 
+## Research
+
+- [All papers and reports](https://sofiagallego.com/science.html#papers): peer-reviewed astrophysics and independent AI safety work, one entry per paper
+- [Constraining the cosmic UV background at z > 3 with MUSE Lyman-alpha emission](https://sofiagallego.com/research/cosmic-uv-background-muse/)
+- [Caught in the act: the assembling cluster CARLA J0800+4029](https://sofiagallego.com/research/caught-in-the-act-carla-j0800/)
+- [Different Reviewers, Same Blind Spot](https://sofiagallego.com/research/different-reviewers-same-blind-spot/): AI safety report
+- [False Epistemic Redundancy](https://sofiagallego.com/research/false-epistemic-redundancy/): AI safety report
+
 ## Founder
 
 - [Dr. Sofia Gallego](https://sofiagallego.com/about.html): extragalactic astrophysicist, scientific advisor, educator, musician and entrepreneur. Personal site: https://sofiagallego.com/
