@@ -93,3 +93,5 @@
   .tool-app .gg-graphcard{padding:8px}
 }
 
+.tool-app #graph .node.shared .dot{fill:#fff0c2;stroke:#fff}
+.tool-app #graph .node.shared .halo{display:none}
