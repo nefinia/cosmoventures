@@ -34,6 +34,7 @@ Contact: contact form at https://cosmoventures.fr/#contact or email contact@cosm
 ## Tools
 
 - [Free tools to try](https://cosmoventures.fr/tools/): interactive guides, prototypes and games from CosmoVentures (also in [French](https://cosmoventures.fr/fr/tools/) and [Spanish](https://cosmoventures.fr/es/tools/))
+- [Glossary Game](https://cosmoventures.fr/tools/glossary/): free game that starts from any term, pulls definitions and links live from Wikipedia and grows a graph of the words you meet; the glossary can be downloaded as Markdown
 
 ## Research
 
