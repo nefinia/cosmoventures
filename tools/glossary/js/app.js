@@ -299,6 +299,7 @@
     var list = {}, edges = [];
     Object.keys(S.nodes).forEach(function (k) { if (S.nodes[k].visited) list[k] = S.nodes[k]; });
     S.near.forEach(function (n) { list[n] = ensureNode(n, S.cur); });
+    if (S.target) list[S.target.title] = ensureNode(S.target.title, S.cur);
     Object.keys(S.edges).forEach(function (k) { var e = S.edges[k]; if (list[e.a] && list[e.b]) edges.push(e); });
     S.near.forEach(function (n) { if (!(S.nodes[n] && S.nodes[n].visited)) edges.push({ a: S.cur, b: n, kind: "ghost" }); });
     return { list: list, edges: edges };
@@ -336,10 +337,10 @@
     });
     Object.keys(v.list).forEach(function (k) {
       var n = v.list[k], cls = "node";
-      if (k === S.cur) cls += " current"; else if (n.visited) cls += " visited"; else cls += " near";
+      if (S.target && k === S.target.title) cls += " target"; if (k === S.cur) cls += " current"; else if (n.visited) cls += " visited"; else cls += " near";
       if (isKept(k)) cls += " kept";
       var g = el("g", { "class": cls, tabindex: "0", role: "button", "aria-label": t("visit") + " " + k, transform: "translate(" + n.x.toFixed(1) + "," + n.y.toFixed(1) + ")" });
-      el("circle", { r: k === S.cur ? 12 : n.visited ? 9 : 7 }, g);
+      el("circle", { r: k === S.cur ? 12 : (S.target && k === S.target.title) ? 11 : n.visited ? 9 : 7 }, g);
       var tx = el("text", { x: 14, y: 4 }, g); tx.textContent = truncate(k, 26);
       if (n.x > dims().w * 0.72) { tx.setAttribute("x", -14); tx.setAttribute("text-anchor", "end"); }
       g.addEventListener("click", function () { if (k !== S.cur) visit(k); });
@@ -403,22 +404,21 @@
     return Promise.all([pStart, pTarget]).then(function (r) {
       S.target = r[1] || null;
       if (!S.target) return visit(r[0]);
-      return summary(r[0]).then(function (s0) {
-        setStatus(t("searching"));
-        return findPath(s0.title, S.target.title, my).then(function (path) {
+      return visit(r[0]).then(function () {
+        if (my + 1 !== S.req) return;
+        my = S.req;
+        var a0 = S.cur; setStatus(t("searching"));
+        return findPath(a0, S.target.title, my).then(function (path) {
           if (my !== S.req) return;
           if (!path) { setStatus(t("noPath"), "err"); return; }
           return Promise.all(path.map(function (p) { return summary(p); })).then(function () {
             if (my !== S.req) return;
             S.solution = path;
-            return visit(path[0]).then(function () {
-              if (my !== S.req) return;
-              path.forEach(function (p, i) {
-                var n = ensureNode(p, i ? path[i - 1] : null); n.visited = true;
-                if (i) addEdge(path[i - 1], p, "path");
-              });
-              render();
+            path.forEach(function (p, i) {
+              var n = ensureNode(p, i ? path[i - 1] : null); n.visited = true;
+              if (i) addEdge(path[i - 1], p, "path");
             });
+            render();
           });
         });
       });

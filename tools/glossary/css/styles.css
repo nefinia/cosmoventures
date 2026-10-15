@@ -81,3 +81,6 @@
   .tool-app .gg-card{padding:18px 16px}
   .tool-app .gg-graphcard{padding:8px}
 }
+
+.tool-app #graph .node.target circle{fill:var(--card);stroke:var(--ink);stroke-width:3;stroke-dasharray:none}
+.tool-app #graph .node.target text{font-weight:700;fill:var(--ink)}
