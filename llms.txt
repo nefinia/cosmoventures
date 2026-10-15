@@ -31,6 +31,10 @@ Contact: contact form at https://cosmoventures.fr/#contact or email contact@cosm
 - [Science-inspired games](https://sofiagallego.com/games/index.html) and the astronomy board game [Cosmoneo](https://sofiagallego.com/cosmoneo.html)
 - Research background with MUSE, KCWI, HST and LSST-related data, across Chile, Switzerland, the United States and France
 
+## Tools
+
+- [Free tools to try](https://cosmoventures.fr/tools/): interactive guides, prototypes and games from CosmoVentures (also in [French](https://cosmoventures.fr/fr/tools/) and [Spanish](https://cosmoventures.fr/es/tools/))
+
 ## Research
 
 - [All papers and reports](https://sofiagallego.com/science.html#papers): peer-reviewed astrophysics and independent AI safety work, one entry per paper
