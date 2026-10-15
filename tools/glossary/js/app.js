@@ -63,7 +63,7 @@
   };
 
   var $ = function (id) { return document.getElementById(id); };
-  var S = { lang: "en", mode: "wander", path: [], moves: 0, cur: null, target: null, won: false, nodes: {}, edges: {}, near: [], ctx: {}, solution: null, req: 0 };
+  var S = { lang: "en", mode: "wander", path: [], moves: 0, cur: null, target: null, won: false, nodes: {}, edges: {}, near: [], ctx: {}, hidden: {}, solution: null, req: 0 };
   var cacheSum = {}, cacheLinks = {};
   var glossary = loadGlossary();
 
@@ -223,7 +223,7 @@
 
   /* ---------- state ---------- */
   function resetGame() {
-    S.path = []; S.moves = 0; S.cur = null; S.won = false; S.nodes = {}; S.edges = {}; S.near = []; S.solution = null; S.solutions = []; S.solCount = {}; S.ctx = {}; S.req++;
+    S.path = []; S.moves = 0; S.cur = null; S.won = false; S.nodes = {}; S.edges = {}; S.near = []; S.solution = null; S.hidden = {}; S.solutions = []; S.solCount = {}; S.ctx = {}; S.req++;
     $("play").hidden = true; $("graph").innerHTML = "";
   }
   function addEdge(a, b, kind) {
@@ -248,7 +248,7 @@
     return Promise.all([summary(title), leadLinks(title).catch(function () { return []; })]).then(function (res) {
       if (my !== S.req) return;
       var s = res[0], links = res[1], key = s.title, prev = S.cur;
-      var node = ensureNode(key, prev); node.visited = true;
+      var node = ensureNode(key, prev); node.visited = true; S.hidden[key] = false;
       if (prev && prev !== key) { addEdge(prev, key, "path"); S.moves++; }
       S.path.push(key); S.cur = key; S.near = links;
       Object.keys(S.nodes).forEach(function (v) {
@@ -309,16 +309,17 @@
   function visible() {
     var list = {}, edges = [];
     Object.keys(S.nodes).forEach(function (k) { if (S.nodes[k].visited) list[k] = S.nodes[k]; });
-    S.near.forEach(function (n) { list[n] = ensureNode(n, S.cur); });
+    var nearShown = S.hidden[S.cur] ? [] : S.near;
+    nearShown.forEach(function (n) { list[n] = ensureNode(n, S.cur); });
     if (S.target) list[S.target.title] = ensureNode(S.target.title, S.cur);
     var extra = [];
     Object.keys(S.ctx || {}).forEach(function (o) {
-      if (!list[o]) return;
+      if (!list[o] || S.hidden[o]) return;
       S.ctx[o].forEach(function (n) { if (!list[n]) { list[n] = ensureNode(n, o); } if (!(S.nodes[n] && S.nodes[n].visited) && !(S.target && n === S.target.title)) extra.push({ a: o, b: n, kind: "ghost" }); });
     });
     Object.keys(S.edges).forEach(function (k) { var e = S.edges[k]; if (list[e.a] && list[e.b]) edges.push(e); });
     extra.forEach(function (e) { edges.push(e); });
-    S.near.forEach(function (n) { if (!(S.nodes[n] && S.nodes[n].visited)) edges.push({ a: S.cur, b: n, kind: "ghost" }); });
+    nearShown.forEach(function (n) { if (!(S.nodes[n] && S.nodes[n].visited)) edges.push({ a: S.cur, b: n, kind: "ghost" }); });
     return { list: list, edges: edges };
   }
   function dims() { return window.innerWidth < 640 ? { w: 380, h: 520 } : { w: 720, h: 520 }; }
@@ -354,7 +355,8 @@
   }
   function unvisit(k) {
     var n = S.nodes[k];
-    if (!n || k === S.path[0] || (S.solCount && S.solCount[k]) || (S.target && k === S.target.title)) return;
+    if (!n) return;
+    if (k === S.path[0] || (S.solCount && S.solCount[k]) || (S.target && k === S.target.title)) { S.hidden[k] = !S.hidden[k]; drawGraph(); return; }
     var my = ++S.req;
     n.visited = false;
     Object.keys(S.edges).forEach(function (e) { var x = S.edges[e]; if (x.a === k || x.b === k) delete S.edges[e]; });
@@ -393,7 +395,7 @@
       if (sol[k]) cls += " onpath"; if (sol[k] > 1 && !isT && !isS) cls += " shared";
       if (isKept(k)) cls += " kept";
       var g = el("g", { "class": cls, tabindex: "0", role: "button", "aria-label": t("visit") + " " + k, transform: "translate(" + n.x.toFixed(1) + "," + n.y.toFixed(1) + ")" });
-      var r = (isT || isS) ? 13 : k === S.cur ? 12 : sol[k] > 1 ? 12 : sol[k] ? 10 : n.visited ? 8 : 5.5;
+      var r = (isT || isS) ? 19 : k === S.cur ? 12 : sol[k] > 1 ? 11 : sol[k] ? 9 : n.visited ? 8 : 5.5;
       if (isT || isS || k === S.cur) el("circle", { r: r + 8, "class": "halo" }, g);
       el("circle", { r: r, "class": "dot", filter: "url(#ggGlow)" }, g);
       var tx = el("text", { x: r + 6, y: 4 }, g); tx.textContent = truncate(k, 26);

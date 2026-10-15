@@ -39,13 +39,12 @@
 @keyframes ggTw{50%{opacity:.12}}
 .tool-app #graph .edge{stroke:#6f7bd0;stroke-width:1.2;opacity:.55}
 .tool-app #graph .edge.ghost{stroke:#8a96e8;stroke-width:1;opacity:.28}
-.tool-app #graph .edge.path{stroke:#ffd27a;stroke-width:3;opacity:1;stroke-dasharray:2 9;stroke-linecap:round;filter:drop-shadow(0 0 5px #ffb84d);animation:ggFlow 1.1s linear infinite}
-@keyframes ggFlow{to{stroke-dashoffset:-22}}
+.tool-app #graph .edge.path{stroke:#d9bd8c;stroke-width:2;opacity:.75}
 .tool-app #graph .node{cursor:pointer}
 .tool-app #graph .node .dot{fill:#aab4ff;stroke:#dfe3ff;stroke-width:1;transition:r .15s}
 .tool-app #graph .node.near .dot{fill:#5a67c9;stroke:#9aa5f5;opacity:.9}
 .tool-app #graph .node.visited .dot{fill:#7f8dff}
-.tool-app #graph .node.onpath .dot{fill:#ffd27a;stroke:#fff3d1}
+.tool-app #graph .node.onpath .dot{fill:#d9bd8c;stroke:#f1e6d0}
 .tool-app #graph .node.kept .dot{fill:#7fe3c4;stroke:#d5fff2}
 .tool-app #graph .node.current .dot{fill:#fff;stroke:#fff}
 .tool-app #graph .node.start .dot{fill:#7fe3c4;stroke:#e8fff8}
@@ -57,7 +56,7 @@
 .tool-app #graph .node text{font-family:"Roboto",Helvetica,Arial,sans-serif;font-size:13px;fill:#e9ecff;paint-order:stroke;stroke:#080a1c;stroke-width:4px;stroke-linejoin:round;pointer-events:none}
 .tool-app #graph .node.near text{fill:#aab2e6;font-size:12px}
 .tool-app #graph .node.start text,.tool-app #graph .node.target text,.tool-app #graph .node.onpath text{font-weight:700;fill:#fff;font-size:14px}
-@media (prefers-reduced-motion:reduce){.tool-app #graph .star,.tool-app #graph .edge.path,.tool-app #graph .node .halo{animation:none}}
+@media (prefers-reduced-motion:reduce){.tool-app #graph .star,.tool-app #graph .node .halo{animation:none}}
 .tool-app .gg-legend{display:flex;flex-wrap:wrap;gap:6px 14px;align-items:center;margin:10px 8px 4px;font-size:.8em;color:var(--dim)}
 .tool-app .gg-legend .k{display:inline-block;width:12px;height:12px;border-radius:50%;border:1.6px solid var(--dim);background:#fff;margin-right:-6px}
 .tool-app .gg-legend .k.visited{background:#7f8dff;border-color:#7f8dff}
@@ -93,5 +92,5 @@
   .tool-app .gg-graphcard{padding:8px}
 }
 
-.tool-app #graph .node.shared .dot{fill:#fff0c2;stroke:#fff}
+.tool-app #graph .node.shared .dot{fill:#efe0bf;stroke:#fff}
 .tool-app #graph .node.shared .halo{display:none}
