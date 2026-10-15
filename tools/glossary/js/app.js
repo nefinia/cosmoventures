@@ -8,7 +8,7 @@
       modeWander: "Free wander", modeConnect: "Connect two terms", startLabel: "Start term", targetLabel: "Target term",
       go: "Start", random: "Surprise me", phStart: "For example: pulsar", phTarget: "For example: music",
       hintWander: "Pick a term, then follow the links that interest you. Keep the terms you want in your glossary.",
-      hintConnect: "Pick two terms and find a path from the first to the second, one link at a time. Fewer steps is better.",
+      hintConnect: "Pick two terms and the game finds the shortest chain of links between them, then you can explore around it.", searching: "Searching for the shortest path…", noPath: "No path found within the search limits. Try two other terms.", pathFound: "Shortest path ({n} steps): {p}",
       legVisited: "Visited", legCurrent: "Current", legNear: "Next steps", legKept: "Kept",
       back: "← Back", keep: "☆ Keep in glossary", kept: "★ Kept", article: "Article ↗", nextSteps: "Where to next",
       glossaryTitle: "Your glossary", export: "Download as Markdown", clear: "Clear", glossaryEmpty: "Terms you keep will appear here, with their definitions.",
@@ -22,7 +22,7 @@
       modeWander: "Paseo libre", modeConnect: "Conectar dos términos", startLabel: "Término de inicio", targetLabel: "Término objetivo",
       go: "Empezar", random: "Sorpréndeme", phStart: "Por ejemplo: púlsar", phTarget: "Por ejemplo: música",
       hintWander: "Elige un término y sigue los enlaces que te interesen. Guarda en tu glosario los términos que quieras.",
-      hintConnect: "Elige dos términos y busca un camino del primero al segundo, un enlace cada vez. Cuantos menos pasos, mejor.",
+      hintConnect: "Elige dos términos y el juego encuentra la cadena de enlaces más corta entre ellos; después puedes explorar a su alrededor.", searching: "Buscando el camino más corto…", noPath: "No se encontró un camino dentro de los límites de búsqueda. Prueba con otros términos.", pathFound: "Camino más corto ({n} pasos): {p}",
       legVisited: "Visitado", legCurrent: "Actual", legNear: "Próximos pasos", legKept: "Guardado",
       back: "← Atrás", keep: "☆ Guardar en el glosario", kept: "★ Guardado", article: "Artículo ↗", nextSteps: "Hacia dónde seguir",
       glossaryTitle: "Tu glosario", export: "Descargar en Markdown", clear: "Vaciar", glossaryEmpty: "Los términos que guardes aparecerán aquí, con sus definiciones.",
@@ -36,7 +36,7 @@
       modeWander: "Balade libre", modeConnect: "Relier deux termes", startLabel: "Terme de départ", targetLabel: "Terme cible",
       go: "Commencer", random: "Surprenez-moi", phStart: "Par exemple : pulsar", phTarget: "Par exemple : musique",
       hintWander: "Choisissez un terme, puis suivez les liens qui vous intéressent. Gardez dans votre glossaire les termes que vous voulez.",
-      hintConnect: "Choisissez deux termes et trouvez un chemin du premier au second, un lien à la fois. Moins il y a d'étapes, mieux c'est.",
+      hintConnect: "Choisissez deux termes : le jeu trouve la chaîne de liens la plus courte entre eux, puis vous pouvez explorer autour.", searching: "Recherche du chemin le plus court…", noPath: "Aucun chemin trouvé dans les limites de la recherche. Essayez deux autres termes.", pathFound: "Chemin le plus court ({n} étapes) : {p}",
       legVisited: "Visité", legCurrent: "Actuel", legNear: "Étapes suivantes", legKept: "Gardé",
       back: "← Retour", keep: "☆ Garder dans le glossaire", kept: "★ Gardé", article: "Article ↗", nextSteps: "Où aller ensuite",
       glossaryTitle: "Votre glossaire", export: "Télécharger en Markdown", clear: "Vider", glossaryEmpty: "Les termes que vous gardez apparaîtront ici, avec leurs définitions.",
@@ -50,7 +50,7 @@
       modeWander: "Freies Wandern", modeConnect: "Zwei Begriffe verbinden", startLabel: "Startbegriff", targetLabel: "Zielbegriff",
       go: "Starten", random: "Überrasch mich", phStart: "Zum Beispiel: Pulsar", phTarget: "Zum Beispiel: Musik",
       hintWander: "Wähle einen Begriff und folge den Links, die dich interessieren. Behalte die Begriffe, die du willst, in deinem Glossar.",
-      hintConnect: "Wähle zwei Begriffe und finde einen Weg vom ersten zum zweiten, Link für Link. Weniger Schritte sind besser.",
+      hintConnect: "Wähle zwei Begriffe: Das Spiel findet die kürzeste Linkkette dazwischen, danach kannst du die Umgebung erkunden.", searching: "Suche den kürzesten Weg…", noPath: "Innerhalb der Suchgrenzen wurde kein Weg gefunden. Versuche zwei andere Begriffe.", pathFound: "Kürzester Weg ({n} Schritte): {p}",
       legVisited: "Besucht", legCurrent: "Aktuell", legNear: "Nächste Schritte", legKept: "Behalten",
       back: "← Zurück", keep: "☆ Im Glossar behalten", kept: "★ Behalten", article: "Artikel ↗", nextSteps: "Wohin als Nächstes",
       glossaryTitle: "Dein Glossar", export: "Als Markdown herunterladen", clear: "Leeren", glossaryEmpty: "Begriffe, die du behältst, erscheinen hier mit ihren Definitionen.",
@@ -144,6 +144,62 @@
       return out;
     });
   }
+
+  /* ---------- shortest path (bidirectional breadth-first search over Wikipedia links) ---------- */
+  function expandBatch(titles, dir) {
+    var prop = dir === "f" ? "links" : "linkshere", pre = dir === "f" ? "pl" : "lh", found = [], pages = 0;
+    var u = base() + "/w/api.php?action=query&format=json&formatversion=2&origin=*&prop=" + prop + "&" + pre + "namespace=0&" + pre + "limit=max" + (dir === "b" ? "&lhprop=title" : "") + "&titles=" + titles.map(encodeURIComponent).join("%7C");
+    function go(extra) {
+      return api(u + extra).then(function (j) {
+        ((j.query && j.query.pages) || []).forEach(function (p) {
+          (p[prop] || []).forEach(function (l) { found.push([p.title, l.title]); });
+        });
+        if (j.continue && ++pages < 3) {
+          var ex = ""; Object.keys(j.continue).forEach(function (k) { ex += "&" + k + "=" + encodeURIComponent(j.continue[k]); });
+          return go(ex);
+        }
+      });
+    }
+    return go("").then(function () { return found; });
+  }
+  function expandSide(frontier, seen, dir) {
+    var take = frontier.slice(0, 60), batches = [];
+    for (var i = 0; i < take.length; i += 15) batches.push(take.slice(i, i + 15));
+    return Promise.all(batches.map(function (b) { return expandBatch(b, dir).catch(function () { return []; }); })).then(function (res) {
+      var fresh = [];
+      res.forEach(function (pairs) {
+        pairs.forEach(function (pr) {
+          var from = pr[0], to = pr[1];
+          if (seen[to] !== undefined || NOISE.test(to)) return;
+          seen[to] = from; fresh.push(to);
+        });
+      });
+      return fresh;
+    });
+  }
+  function findPath(a, b, token) {
+    if (a === b) return Promise.resolve([a]);
+    var F = {}, B = {}, fF = [a], fB = [b]; F[a] = null; B[b] = null;
+    function build(m) {
+      var left = [], x = m; while (x !== null && x !== undefined) { left.unshift(x); x = F[x]; }
+      var right = [], y = B[m]; while (y !== null && y !== undefined) { right.push(y); y = B[y]; }
+      return left.concat(right);
+    }
+    function meet(list, other) { for (var i = 0; i < list.length; i++) if (other[list[i]] !== undefined) return list[i]; return null; }
+    function round(n) {
+      if (n > 8 || token !== S.req) return Promise.resolve(null);
+      var fwd = fF.length <= fB.length;
+      return expandSide(fwd ? fF : fB, fwd ? F : B, fwd ? "f" : "b").then(function (fresh) {
+        if (fwd) fF = fresh; else fB = fresh;
+        var m = meet(fresh, fwd ? B : F);
+        if (m !== null) return build(m);
+        if (!fF.length && !fB.length) return null;
+        return round(n + 1);
+      });
+    }
+    var direct = null;
+    return round(0);
+  }
   function resolveTerm(term) {
     var q = term.trim();
     return api(base() + "/w/api.php?action=opensearch&search=" + encodeURIComponent(q) + "&limit=1&namespace=0&format=json&origin=*").then(function (j) {
@@ -156,7 +212,7 @@
 
   /* ---------- state ---------- */
   function resetGame() {
-    S.path = []; S.moves = 0; S.cur = null; S.won = false; S.nodes = {}; S.edges = {}; S.near = []; S.req++;
+    S.path = []; S.moves = 0; S.cur = null; S.won = false; S.nodes = {}; S.edges = {}; S.near = []; S.solution = null; S.req++;
     $("play").hidden = true; $("graph").innerHTML = "";
   }
   function addEdge(a, b, kind) {
@@ -189,7 +245,7 @@
         var vl = cacheLinks[gkey(S.lang, v)] || [];
         if (links.indexOf(v) >= 0 || vl.indexOf(key) >= 0) addEdge(key, v, "link");
       });
-      if (S.target && key.toLowerCase() === S.target.title.toLowerCase()) S.won = true;
+      if (S.target && !S.solution && key.toLowerCase() === S.target.title.toLowerCase()) S.won = true;
       $("play").hidden = false;
       render();
     }).catch(function (e) {
@@ -206,7 +262,8 @@
   function updateStatus() {
     var parts = [];
     if (S.target) parts.push(t("targetIs", { t: S.target.title + (S.target.description ? " (" + S.target.description + ")" : "") }));
-    if (S.won) setStatus(t("win", { t: S.target.title, n: S.moves }), "win");
+    if (S.solution) setStatus(t("pathFound", { n: S.solution.length - 1, p: S.solution.join(" → ") }), "win");
+    else if (S.won) setStatus(t("win", { t: S.target.title, n: S.moves }), "win");
     else setStatus(parts.join(" · "));
   }
   function truncate(s, n) { return s.length > n ? s.slice(0, n - 1) + "…" : s; }
@@ -339,12 +396,32 @@
   function start(startTerm, targetTerm) {
     resetGame();
     var tgt = S.mode === "connect" ? targetTerm : "";
+    var my = S.req;
     setStatus(t("loading"));
     var pStart = resolveTerm(startTerm);
     var pTarget = tgt ? resolveTerm(tgt).then(function (n) { return summary(n); }) : Promise.resolve(null);
     return Promise.all([pStart, pTarget]).then(function (r) {
       S.target = r[1] || null;
-      return visit(r[0]);
+      if (!S.target) return visit(r[0]);
+      return summary(r[0]).then(function (s0) {
+        setStatus(t("searching"));
+        return findPath(s0.title, S.target.title, my).then(function (path) {
+          if (my !== S.req) return;
+          if (!path) { setStatus(t("noPath"), "err"); return; }
+          return Promise.all(path.map(function (p) { return summary(p); })).then(function () {
+            if (my !== S.req) return;
+            S.solution = path;
+            return visit(path[0]).then(function () {
+              if (my !== S.req) return;
+              path.forEach(function (p, i) {
+                var n = ensureNode(p, i ? path[i - 1] : null); n.visited = true;
+                if (i) addEdge(path[i - 1], p, "path");
+              });
+              render();
+            });
+          });
+        });
+      });
     }).catch(function (e) {
       if (e && e.notfound) setStatus(t("errNotFound", { t: e.notfound }), "err"); else setStatus(t("errNet"), "err");
     });
