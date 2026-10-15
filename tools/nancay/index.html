@@ -1,6 +1,6 @@
 <!doctype html>
 <html lang="en">
-  <head>
+<head>
 <!-- Global site tag (gtag.js) - Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-5RWL43XS5X"></script>
 <script>
@@ -11,17 +11,78 @@
   gtag('config', 'G-5RWL43XS5X');
 </script>
 
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Nançay Radio Observatory Interactive Guide</title>
-    <meta
-      name="description"
-      content="Interactive outreach guide (EN/FR/ES) to radio astronomy and the Nançay Radio Observatory instruments."
-    />
-    <script type="module" crossorigin src="./assets/index-CygZG2Ql.js"></script>
-    <link rel="stylesheet" crossorigin href="./assets/index-Crw6oJNi.css">
-  </head>
-  <body>
-    <div id="app"></div>
-  </body>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nançay Radio Observatory guide | CosmoVentures</title>
+  <meta name="description" content="An interactive guide to radio astronomy and the instruments at the Nançay Radio Observatory, in English, French and Spanish. Made by CosmoVentures.">
+  <link rel="canonical" href="https://cosmoventures.fr/tools/nancay/">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="CosmoVentures">
+  <meta property="og:locale" content="en_GB">
+  <meta property="og:locale:alternate" content="fr_FR">
+  <meta property="og:locale:alternate" content="es_ES">
+  <meta property="og:title" content="Nançay Radio Observatory guide | CosmoVentures">
+  <meta property="og:description" content="An interactive guide to radio astronomy and the instruments at the Nançay Radio Observatory, in English, French and Spanish.">
+  <meta property="og:url" content="https://cosmoventures.fr/tools/nancay/">
+  <meta property="og:image" content="https://cosmoventures.fr/assets/images/og-cosmoventures.jpg">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Nançay Radio Observatory guide | CosmoVentures">
+  <meta name="twitter:description" content="An interactive guide to radio astronomy and the instruments at the Nançay Radio Observatory, in English, French and Spanish.">
+  <meta name="twitter:image" content="https://cosmoventures.fr/assets/images/og-cosmoventures.jpg">
+  <link rel="icon" href="/assets/cosmoventures.ico">
+  <link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-icon-180x180.png">
+  <meta name="theme-color" content="#f3f4f8"><meta name="color-scheme" content="light">
+  <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;900&family=Roboto+Mono:wght@300;400;700&display=swap">
+  <link rel="stylesheet" href="/assets/css/home.css">
+  <link rel="stylesheet" href="/assets/css/cosmoventures.css">
+  <link rel="stylesheet" href="/assets/css/tool.css">
+  <script src="/assets/js/display.js"></script>
+  <script type="module" crossorigin src="./assets/index-DJ_-zIwQ.js"></script>
+  <link rel="stylesheet" crossorigin href="./assets/index-8BDh4uXI.css">
+</head>
+<body class="cv tool-page">
+<a class="skip" href="#app">Skip to content</a>
+<nav class="site" aria-label="Main">
+  <div class="navin">
+    <a class="brand" href="/"><img src="/assets/images/cosmoventures-logo-192.png" alt="" width="28" height="28">CosmoVentures</a>
+    <ul id="menu">
+      <li><a href="/#services">Services</a></li>
+      <li><a href="/#process">Process</a></li>
+      <li><a href="/#work">Work</a></li>
+      <li><a href="/tools/" aria-current="page">Tools</a></li>
+      <li><a href="/#research">Research</a></li>
+      <li><a href="/#contact">Contact</a></li>
+      <li><a href="/#about">About</a></li>
+    </ul>
+    <button class="burger" id="burger" aria-expanded="false" aria-controls="menu">Menu</button>
+  </div>
+</nav>
+
+<header class="tool-intro cv-wrap">
+  <p class="eyebrow"><a href="/tools/">CosmoVentures · Tools</a></p>
+  <h1>Nançay Radio Observatory guide</h1>
+  <p class="cv-sub">An interactive guide to radio astronomy and the instruments at Nançay, in English, French and Spanish.</p>
+  <p class="tool-why">Made for the Nançay Radio Observatory. It shows how an instrument-heavy field can become a guide that visitors, schools and the press can follow.</p>
+</header>
+
+<main class="cv-wrap tool-main">
+  <div id="app" class="tool-app"></div>
+</main>
+
+<section class="cv-wrap tool-cta">
+  <h2>Looking for something like this?</h2>
+  <p>CosmoVentures designs and builds interactive pieces for organisations, from a first prototype to a finished guide.</p>
+  <a class="btn primary" href="/#contact">Discuss a project</a>
+</section>
+
+<footer><span>Cosmoventures SASU · Paris, France · <a class="support" href="https://ko-fi.com/cosmosofia" rel="noopener">Support my work</a></span><a class="flogo" href="/" aria-label="CosmoVentures"><img src="/assets/images/cosmoventures-logo-192.png" alt="CosmoVentures" width="64" height="64"></a><span><a class="support" href="https://sofiagallego.com/">Personal website: sofiagallego.com</a> · © Nefinia</span></footer>
+<script>
+  document.getElementById('burger').addEventListener('click', function(){
+    var m=document.getElementById('menu'), o=m.classList.toggle('open'); this.setAttribute('aria-expanded', String(o));
+  });
+</script>
+</body>
 </html>
