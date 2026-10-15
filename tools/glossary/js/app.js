@@ -63,7 +63,7 @@
   };
 
   var $ = function (id) { return document.getElementById(id); };
-  var S = { lang: "en", mode: "wander", path: [], moves: 0, cur: null, target: null, won: false, nodes: {}, edges: {}, near: [], req: 0 };
+  var S = { lang: "en", mode: "wander", path: [], moves: 0, cur: null, target: null, won: false, nodes: {}, edges: {}, near: [], ctx: {}, solution: null, req: 0 };
   var cacheSum = {}, cacheLinks = {};
   var glossary = loadGlossary();
 
@@ -212,7 +212,7 @@
 
   /* ---------- state ---------- */
   function resetGame() {
-    S.path = []; S.moves = 0; S.cur = null; S.won = false; S.nodes = {}; S.edges = {}; S.near = []; S.solution = null; S.req++;
+    S.path = []; S.moves = 0; S.cur = null; S.won = false; S.nodes = {}; S.edges = {}; S.near = []; S.solution = null; S.ctx = {}; S.req++;
     $("play").hidden = true; $("graph").innerHTML = "";
   }
   function addEdge(a, b, kind) {
@@ -300,14 +300,27 @@
     Object.keys(S.nodes).forEach(function (k) { if (S.nodes[k].visited) list[k] = S.nodes[k]; });
     S.near.forEach(function (n) { list[n] = ensureNode(n, S.cur); });
     if (S.target) list[S.target.title] = ensureNode(S.target.title, S.cur);
+    var extra = [];
+    Object.keys(S.ctx || {}).forEach(function (o) {
+      if (!list[o]) return;
+      S.ctx[o].forEach(function (n) { if (!list[n]) { list[n] = ensureNode(n, o); } if (!(S.nodes[n] && S.nodes[n].visited) && !(S.target && n === S.target.title)) extra.push({ a: o, b: n, kind: "ghost" }); });
+    });
     Object.keys(S.edges).forEach(function (k) { var e = S.edges[k]; if (list[e.a] && list[e.b]) edges.push(e); });
+    extra.forEach(function (e) { edges.push(e); });
     S.near.forEach(function (n) { if (!(S.nodes[n] && S.nodes[n].visited)) edges.push({ a: S.cur, b: n, kind: "ghost" }); });
     return { list: list, edges: edges };
   }
   function dims() { return window.innerWidth < 640 ? { w: 380, h: 520 } : { w: 720, h: 520 }; }
   function layout(v) {
-    var names = Object.keys(v.list), W = dims().w, H = dims().h;
-    for (var it = 0; it < 240; it++) {
+    var names = Object.keys(v.list), W = dims().w, H = dims().h, pin = {};
+    if (S.target && S.path.length) {
+      var s0 = S.path[0], t0 = S.target.title, vert = W < 500;
+      if (v.list[s0] && v.list[t0] && s0 !== t0) {
+        pin[s0] = vert ? [W / 2, 70] : [95, H / 2]; pin[t0] = vert ? [W / 2, H - 70] : [W - 95, H / 2];
+        v.list[s0].x = pin[s0][0]; v.list[s0].y = pin[s0][1]; v.list[t0].x = pin[t0][0]; v.list[t0].y = pin[t0][1];
+      }
+    }
+    for (var it = 0; it < 260; it++) {
       for (var i = 0; i < names.length; i++) {
         var a = v.list[names[i]];
         for (var j = i + 1; j < names.length; j++) {
@@ -321,28 +334,46 @@
         dx = dx / d * f; dy = dy / d * f; a.vx += dx; a.vy += dy; b.vx -= dx; b.vy -= dy;
       });
       names.forEach(function (k) {
-        var n = v.list[k]; n.vx *= 0.82; n.vy *= 0.82; n.x += n.vx; n.y += n.vy;
+        var n = v.list[k];
+        if (pin[k]) { n.x = pin[k][0]; n.y = pin[k][1]; n.vx = n.vy = 0; return; }
+        n.vx *= 0.82; n.vy *= 0.82; n.x += n.vx; n.y += n.vy;
         n.x = Math.min(W - 70, Math.max(70, n.x)); n.y = Math.min(H - 30, Math.max(30, n.y));
       });
     }
   }
   function drawGraph() {
     var v = visible(); layout(v);
-    var svg = $("graph"), NS = "http://www.w3.org/2000/svg"; svg.innerHTML = "";
-    svg.setAttribute("aria-label", t("graphLabel")); svg.setAttribute("viewBox", "0 0 " + dims().w + " " + dims().h);
+    var svg = $("graph"), NS = "http://www.w3.org/2000/svg", W = dims().w, H = dims().h; svg.innerHTML = "";
+    svg.setAttribute("aria-label", t("graphLabel")); svg.setAttribute("viewBox", "0 0 " + W + " " + H);
     function el(n, attrs, parent) { var e = document.createElementNS(NS, n); Object.keys(attrs).forEach(function (k) { e.setAttribute(k, attrs[k]); }); (parent || svg).appendChild(e); return e; }
+    var defs = el("defs", {});
+    var bg = el("radialGradient", { id: "ggBg", cx: "50%", cy: "45%", r: "75%" }, defs);
+    el("stop", { offset: "0", "stop-color": "#1b2150" }, bg); el("stop", { offset: "1", "stop-color": "#080a1c" }, bg);
+    var f = el("filter", { id: "ggGlow", x: "-80%", y: "-80%", width: "260%", height: "260%" }, defs);
+    el("feGaussianBlur", { stdDeviation: "4", result: "b" }, f);
+    var mg = el("feMerge", {}, f); el("feMergeNode", { "in": "b" }, mg); el("feMergeNode", { "in": "SourceGraphic" }, mg);
+    el("rect", { width: W, height: H, fill: "url(#ggBg)" });
+    var seed = 7; function rnd() { seed = (seed * 9301 + 49297) % 233280; return seed / 233280; }
+    for (var i = 0; i < 70; i++) el("circle", { cx: (rnd() * W).toFixed(0), cy: (rnd() * H).toFixed(0), r: (rnd() * 1.1 + .3).toFixed(2), "class": "star", style: "animation-delay:" + (rnd() * 4).toFixed(1) + "s" });
     v.edges.forEach(function (e) {
       var a = v.list[e.a], b = v.list[e.b];
-      el("line", { "class": "edge " + (e.kind === "path" ? "path" : e.kind === "ghost" ? "ghost" : ""), x1: a.x.toFixed(1), y1: a.y.toFixed(1), x2: b.x.toFixed(1), y2: b.y.toFixed(1) });
+      el("line", { "class": "edge " + (e.kind === "path" ? "path" : e.kind === "ghost" ? "ghost" : "link"), x1: a.x.toFixed(1), y1: a.y.toFixed(1), x2: b.x.toFixed(1), y2: b.y.toFixed(1) });
     });
+    var sol = {}; (S.solution || []).forEach(function (p) { sol[p] = 1; });
     Object.keys(v.list).forEach(function (k) {
-      var n = v.list[k], cls = "node";
-      if (S.target && k === S.target.title) cls += " target"; if (k === S.cur) cls += " current"; else if (n.visited) cls += " visited"; else cls += " near";
+      var n = v.list[k], cls = "node", isT = S.target && k === S.target.title, isS = S.solution ? k === S.solution[0] : (S.path.length && k === S.path[0] && S.target);
+      if (isT) cls += " target"; else if (isS) cls += " start";
+      if (k === S.cur) cls += " current"; else if (n.visited) cls += " visited"; else cls += " near";
+      if (sol[k]) cls += " onpath";
       if (isKept(k)) cls += " kept";
       var g = el("g", { "class": cls, tabindex: "0", role: "button", "aria-label": t("visit") + " " + k, transform: "translate(" + n.x.toFixed(1) + "," + n.y.toFixed(1) + ")" });
-      el("circle", { r: k === S.cur ? 12 : (S.target && k === S.target.title) ? 11 : n.visited ? 9 : 7 }, g);
-      var tx = el("text", { x: 14, y: 4 }, g); tx.textContent = truncate(k, 26);
-      if (n.x > dims().w * 0.72) { tx.setAttribute("x", -14); tx.setAttribute("text-anchor", "end"); }
+      var r = (isT || isS) ? 13 : k === S.cur ? 12 : sol[k] ? 10 : n.visited ? 8 : 5.5;
+      if (isT || isS || k === S.cur) el("circle", { r: r + 8, "class": "halo" }, g);
+      el("circle", { r: r, "class": "dot", filter: "url(#ggGlow)" }, g);
+      var tx = el("text", { x: r + 6, y: 4 }, g); tx.textContent = truncate(k, 26);
+      var vert = W < 500;
+      if (n.x > W * 0.68 && !(vert && (isT || isS))) { tx.setAttribute("x", -(r + 6)); tx.setAttribute("text-anchor", "end"); }
+      if (vert && (isT || isS)) { tx.setAttribute("x", 0); tx.setAttribute("text-anchor", "middle"); tx.setAttribute("y", isT ? -(r + 12) : r + 20); }
       g.addEventListener("click", function () { if (k !== S.cur) visit(k); });
       g.addEventListener("keydown", function (ev) { if ((ev.key === "Enter" || ev.key === " ") && k !== S.cur) { ev.preventDefault(); visit(k); } });
     });
@@ -408,12 +439,14 @@
         if (my + 1 !== S.req) return;
         my = S.req;
         var a0 = S.cur; setStatus(t("searching"));
+        leadLinks(S.target.title).then(function (l) { if (my === S.req) { S.ctx[S.target.title] = l.slice(0, 8); drawGraph(); } }).catch(function () {});
         return findPath(a0, S.target.title, my).then(function (path) {
           if (my !== S.req) return;
           if (!path) { setStatus(t("noPath"), "err"); return; }
           return Promise.all(path.map(function (p) { return summary(p); })).then(function () {
             if (my !== S.req) return;
             S.solution = path;
+            path.forEach(function (p, i) { if (i && i < path.length - 1) leadLinks(p).then(function (l) { S.ctx[p] = l.filter(function (x) { return path.indexOf(x) < 0; }).slice(0, 3); drawGraph(); }).catch(function () {}); });
             path.forEach(function (p, i) {
               var n = ensureNode(p, i ? path[i - 1] : null); n.visited = true;
               if (i) addEdge(path[i - 1], p, "path");
