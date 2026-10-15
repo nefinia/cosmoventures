@@ -1,4 +1,3 @@
-const ANNOTATION_STORAGE_KEY = "scifi-prediction-benchmark-annotations";
 const state = {
   authors: window.BENCHMARK_DATA.authors,
   predictions: window.BENCHMARK_DATA.predictions,
@@ -9,79 +8,90 @@ const state = {
   yearMax: 2000,
 };
 
+function esc(value) {
+  return String(value ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+}
+
+function label(value) {
+  const text = String(value).replaceAll("_", " ");
+  return text.charAt(0).toUpperCase() + text.slice(1);
+}
+
 function percent(value) {
-  return `${Math.round(value * 100)}%`;
+  return `${Math.max(0, Math.min(100, value * 100)).toFixed(1)}%`;
 }
 
 function scorePct(value) {
-  return `${(value * 100).toFixed(1)}`;
+  return (value * 100).toFixed(1);
 }
 
-function loadStoredAnnotations() {
-  try {
-    return JSON.parse(window.localStorage.getItem(ANNOTATION_STORAGE_KEY) || "{}");
-  } catch (_error) {
-    return {};
-  }
+function filteredPredictions() {
+  return state.predictions.filter((prediction) =>
+    (!state.domain || prediction.technology_domain === state.domain) && prediction.year <= state.yearMax);
 }
 
-function annotationFor(predictionId) {
-  const localAnnotations = loadStoredAnnotations();
-  return localAnnotations[predictionId] || state.matches[predictionId]?.annotation || null;
+function focusAfter(selector) {
+  const el = document.querySelector(selector);
+  if (el) el.focus();
 }
 
 function renderLeaderboard() {
   const container = document.getElementById("leaderboard");
-  const filteredPredictions = state.predictions.filter((prediction) => {
-    const matchesDomain = !state.domain || prediction.technology_domain === state.domain;
-    const withinYear = prediction.year <= state.yearMax;
-    return matchesDomain && withinYear;
-  });
+  const filtered = filteredPredictions();
 
   const authorScores = state.authors
     .map((author) => {
-      const authorPredictions = filteredPredictions.filter((prediction) => prediction.author === author.author);
-      if (!authorPredictions.length) {
-        return null;
-      }
-      const average = authorPredictions.reduce((sum, item) => sum + item.score, 0) / authorPredictions.length;
-      return { ...author, filteredAverage: average };
+      const items = filtered.filter((prediction) => prediction.author === author.author);
+      if (!items.length) return null;
+      const average = items.reduce((sum, item) => sum + item.score, 0) / items.length;
+      return { ...author, filteredAverage: average, filteredCount: items.length };
     })
     .filter(Boolean)
     .sort((left, right) => right.filteredAverage - left.filteredAverage);
 
+  document.getElementById("resultCount").textContent =
+    `${filtered.length} of ${state.predictions.length} predictions, ${authorScores.length} authors`;
+
+  if (!authorScores.length) {
+    container.innerHTML = `<li class="sf-empty">No authors match the current filters.</li>`;
+    return;
+  }
+
   container.innerHTML = authorScores.map((author, index) => `
-    <article class="leaderboard-card ${state.selectedAuthor === author.author ? "active" : ""}" data-author="${author.author}">
-      <div class="card-topline">
-        <h3>${author.author}</h3>
-        <span class="rank-pill">#${index + 1}</span>
-      </div>
-      <div class="meta-row">
-        <span class="score-pill">${scorePct(author.filteredAverage)} score</span>
-        <span class="meta-chip">${author.prediction_count} predictions</span>
-        <span class="meta-chip">${author.domain_count} domains</span>
-      </div>
-    </article>
+    <li>
+      <button type="button" class="sf-row${state.selectedAuthor === author.author ? " active" : ""}" data-author="${esc(author.author)}" aria-pressed="${state.selectedAuthor === author.author}">
+        <span class="sf-rank"><span class="sf-visually">Rank </span>${index + 1}</span>
+        <span class="sf-row-main">
+          <span class="sf-row-name">${esc(author.author)}</span>
+          <span class="sf-row-meta">${author.filteredCount} of ${author.prediction_count} predictions &middot; ${author.domain_count} domains</span>
+          <span class="sf-track" aria-hidden="true"><span class="sf-fill" style="width:${percent(author.filteredAverage)}"></span></span>
+        </span>
+        <span class="sf-score">${scorePct(author.filteredAverage)}<span class="sf-visually"> out of 100</span></span>
+      </button>
+    </li>
   `).join("");
 
-  container.querySelectorAll(".leaderboard-card").forEach((card) => {
-    card.addEventListener("click", () => {
-      state.selectedAuthor = card.dataset.author;
+  container.querySelectorAll(".sf-row").forEach((button) => {
+    button.addEventListener("click", () => {
+      state.selectedAuthor = button.dataset.author;
+      state.selectedPrediction = null;
       renderAuthorProfile();
       renderLeaderboard();
       renderPredictionList();
+      renderMatchDetail(null);
+      focusAfter(`.sf-row[data-author="${CSS.escape(state.selectedAuthor)}"]`);
     });
   });
 }
 
-function renderSubscoreBar(label, value) {
+function renderSubscoreBar(name, value) {
   return `
-    <div class="bar-row">
-      <span>${label}</span>
-      <div class="bar-track">
-        <div class="bar-fill" style="width:${percent(value)}"></div>
-      </div>
-      <strong>${scorePct(value)}</strong>
+    <div class="sf-bar">
+      <dt>${name}</dt>
+      <dd>
+        <span class="sf-track" aria-hidden="true"><span class="sf-fill" style="width:${percent(value)}"></span></span>
+        <span class="sf-bar-val">${scorePct(value)}</span>
+      </dd>
     </div>
   `;
 }
@@ -90,134 +100,126 @@ function renderAuthorProfile() {
   const container = document.getElementById("authorProfile");
   const author = state.authors.find((item) => item.author === state.selectedAuthor);
   if (!author) {
-    container.className = "author-profile empty-state";
+    container.className = "sf-empty";
     container.textContent = "Select an author from the leaderboard.";
     return;
   }
 
-  container.className = "author-profile";
+  container.className = "sf-profile";
   container.innerHTML = `
-    <div class="detail-section">
-      <h3>${author.author}</h3>
-      <p>${author.prediction_count} seeded predictions spanning ${author.domain_count} domains.</p>
-      <div class="metric-grid">
-        <div class="metric-box"><span>Overall score</span><strong>${author.normalized_score.toFixed(1)}</strong></div>
-        <div class="metric-box"><span>Mean prediction score</span><strong>${scorePct(author.mean_prediction_score)}</strong></div>
-      </div>
-    </div>
-    <div class="detail-section">
-      <h4>Average subscore breakdown</h4>
-      <div class="subscore-bars">
-        ${renderSubscoreBar("Existence", author.average_existence_match)}
-        ${renderSubscoreBar("Functional", author.average_functional_match)}
-        ${renderSubscoreBar("Mechanistic", author.average_mechanistic_match)}
-        ${renderSubscoreBar("Societal", author.average_societal_match)}
-      </div>
-    </div>
-    <div class="detail-section">
-      <h4>Domain strengths</h4>
-      <div class="meta-row">
-        ${author.domains.map((domain) => `<span class="meta-chip">${domain}</span>`).join("")}
-      </div>
-    </div>
+    <h3>${esc(author.author)}</h3>
+    <p class="sf-note">${author.prediction_count} seeded predictions spanning ${author.domain_count} domains. Profile figures cover all of them, whatever the filters.</p>
+    <dl class="sf-metrics">
+      <div><dt>Overall score</dt><dd>${author.normalized_score.toFixed(1)}</dd></div>
+      <div><dt>Mean prediction score</dt><dd>${scorePct(author.mean_prediction_score)}</dd></div>
+    </dl>
+    <h4>Average subscore breakdown</h4>
+    <dl class="sf-bars">
+      ${renderSubscoreBar("Existence", author.average_existence_match)}
+      ${renderSubscoreBar("Functional", author.average_functional_match)}
+      ${renderSubscoreBar("Mechanistic", author.average_mechanistic_match)}
+      ${renderSubscoreBar("Societal", author.average_societal_match)}
+    </dl>
+    <h4>Domain strengths</h4>
+    <ul class="sf-chips">
+      ${author.domains.map((domain) => `<li>${esc(label(domain))}</li>`).join("")}
+    </ul>
   `;
+}
+
+function statusChip(annotation) {
+  return annotation && annotation.status ? `<li class="sf-status">${esc(label(annotation.status))}</li>` : "";
 }
 
 function renderPredictionList() {
   const container = document.getElementById("predictionList");
-  const predictions = state.predictions
+  const predictions = filteredPredictions()
     .filter((prediction) => !state.selectedAuthor || prediction.author === state.selectedAuthor)
-    .filter((prediction) => !state.domain || prediction.technology_domain === state.domain)
-    .filter((prediction) => prediction.year <= state.yearMax)
     .sort((left, right) => right.score - left.score);
 
   if (!predictions.length) {
-    container.innerHTML = `<div class="empty-state">No predictions match the current filters.</div>`;
+    container.innerHTML = `<li class="sf-empty">No predictions match the current filters.</li>`;
     return;
   }
 
-  container.innerHTML = predictions.map((prediction) => {
-    const annotation = annotationFor(prediction.id);
-    return `
-      <article class="prediction-card ${state.selectedPrediction === prediction.id ? "active" : ""}" data-id="${prediction.id}">
-        <div class="card-topline">
-          <h3>${prediction.work}</h3>
-          <span class="score-pill">${scorePct(prediction.score)}</span>
-        </div>
-        <p>${prediction.author} • ${prediction.year}</p>
-        <div class="meta-row">
-          <span class="meta-chip">${prediction.technology_domain}</span>
-          <span class="meta-chip">${prediction.matched_technology_name}</span>
-          ${annotation ? `<span class="status-pill ${annotation.status}">${annotation.status.replaceAll("_", " ")}</span>` : ""}
-        </div>
-      </article>
-    `;
-  }).join("");
+  container.innerHTML = predictions.map((prediction) => `
+    <li>
+      <button type="button" class="sf-pred${state.selectedPrediction === prediction.id ? " active" : ""}" data-id="${esc(prediction.id)}" aria-pressed="${state.selectedPrediction === prediction.id}">
+        <span class="sf-pred-top">
+          <span class="sf-pred-title">${esc(prediction.work)}</span>
+          <span class="sf-score">${scorePct(prediction.score)}<span class="sf-visually"> out of 100</span></span>
+        </span>
+        <span class="sf-row-meta">${esc(prediction.author)} &middot; ${prediction.year}</span>
+        <span class="sf-chips-inline">
+          <span>${esc(label(prediction.technology_domain))}</span>
+          <span>${esc(prediction.matched_technology_name)}</span>
+          ${prediction.annotation && prediction.annotation.status ? `<span class="sf-status">${esc(label(prediction.annotation.status))}</span>` : ""}
+        </span>
+      </button>
+    </li>
+  `).join("");
 
-  container.querySelectorAll(".prediction-card").forEach((card) => {
-    card.addEventListener("click", () => {
-      state.selectedPrediction = card.dataset.id;
+  container.querySelectorAll(".sf-pred").forEach((button) => {
+    button.addEventListener("click", () => {
+      state.selectedPrediction = button.dataset.id;
       renderPredictionList();
-      renderMatchDetail(card.dataset.id);
+      renderMatchDetail(button.dataset.id);
+      focusAfter(`.sf-pred[data-id="${CSS.escape(button.dataset.id)}"]`);
     });
   });
 }
 
 function renderMatchDetail(predictionId) {
   const container = document.getElementById("matchDetail");
-  const payload = state.matches[predictionId];
+  const payload = predictionId ? state.matches[predictionId] : null;
+  if (!payload) {
+    container.className = "sf-detail sf-empty";
+    container.textContent = "Select a prediction to view the top candidate match and subscore breakdown.";
+    return;
+  }
   const { prediction, score, top_match, candidates } = payload;
-  const annotation = annotationFor(predictionId);
-  container.className = "match-detail";
+  const annotation = prediction.annotation || state.predictions.find((p) => p.id === predictionId)?.annotation;
+  container.className = "sf-detail";
   container.innerHTML = `
-    <div class="detail-section">
-      <div class="card-topline">
-        <h3>${prediction.work}</h3>
-        <span class="score-pill">${scorePct(score.final_score)} final score</span>
-      </div>
-      <p><strong>${prediction.author}</strong> predicted a ${prediction.technology_domain} concept in ${prediction.year}.</p>
-      <p>${prediction.excerpt}</p>
-      <div class="meta-row">
-        <span class="meta-chip">Type: ${prediction.prediction_type}</span>
-        <span class="meta-chip">Specificity: ${prediction.specificity_score.toFixed(2)}</span>
-        ${annotation ? `<span class="status-pill ${annotation.status}">${annotation.status.replaceAll("_", " ")}</span>` : ""}
-      </div>
+    <div class="sf-detail-head">
+      <h3>${esc(prediction.work)}</h3>
+      <span class="sf-final"><span class="sf-final-num">${scorePct(score.final_score)}</span><span class="sf-final-lbl">Final score, out of 100</span></span>
     </div>
-    <div class="detail-section">
-      <h4>Top matched technology</h4>
-      <p><strong>${score.matched_technology_name}</strong> (${score.matched_technology_year}) with combined match score ${top_match.combined_score.toFixed(2)}.</p>
-      <div class="subscore-bars">
-        ${renderSubscoreBar("Existence", score.existence_match)}
-        ${renderSubscoreBar("Functional", score.functional_match)}
-        ${renderSubscoreBar("Mechanistic", score.mechanistic_match)}
-        ${renderSubscoreBar("Societal", score.societal_match)}
-      </div>
-    </div>
-    <div class="detail-section">
-      <h4>Comparison details</h4>
-      <ul>
-        <li><strong>Description:</strong> ${prediction.description}</li>
-        <li><strong>Mechanism:</strong> ${prediction.mechanism}</li>
-        <li><strong>Societal role:</strong> ${prediction.societal_role}</li>
-        <li><strong>Lead time:</strong> ${score.lead_time_years} years</li>
-      </ul>
-    </div>
-    <div class="detail-section">
-      <h4>Candidate matches</h4>
-      <ul>
-        ${candidates.map((candidate) => `<li>${candidate.rank}. ${candidate.technology_name} (${candidate.combined_score.toFixed(2)})</li>`).join("")}
-      </ul>
-    </div>
+    <p><strong>${esc(prediction.author)}</strong> predicted a ${esc(label(prediction.technology_domain).toLowerCase())} concept in ${prediction.year}.</p>
+    <p class="sf-excerpt">${esc(prediction.excerpt)}</p>
+    <ul class="sf-chips">
+      <li>Type: ${esc(label(prediction.prediction_type))}</li>
+      <li>Specificity: ${scorePct(prediction.specificity_score)}</li>
+      ${statusChip(annotation)}
+    </ul>
+    <h4>Top matched technology</h4>
+    <p><strong>${esc(score.matched_technology_name)}</strong> (${score.matched_technology_year}) with combined match score ${scorePct(top_match.combined_score)}.</p>
+    <dl class="sf-bars">
+      ${renderSubscoreBar("Existence", score.existence_match)}
+      ${renderSubscoreBar("Functional", score.functional_match)}
+      ${renderSubscoreBar("Mechanistic", score.mechanistic_match)}
+      ${renderSubscoreBar("Societal", score.societal_match)}
+    </dl>
+    <h4>Comparison details</h4>
+    <dl class="sf-facts">
+      <div><dt>Description</dt><dd>${esc(prediction.description)}</dd></div>
+      <div><dt>Mechanism</dt><dd>${esc(prediction.mechanism)}</dd></div>
+      <div><dt>Societal role</dt><dd>${esc(prediction.societal_role)}</dd></div>
+      <div><dt>Lead time</dt><dd>${score.lead_time_years} years</dd></div>
+    </dl>
+    <h4>Candidate matches</h4>
+    <ol class="sf-cands">
+      ${candidates.map((candidate) => `<li><span>${esc(candidate.technology_name)}</span><span class="sf-cand-val">${scorePct(candidate.combined_score)}</span></li>`).join("")}
+    </ol>
   `;
 }
 
 function hydrateFilters() {
   const domainSelect = document.getElementById("domainFilter");
-  domainSelect.innerHTML = `<option value="">All domains</option>${window.BENCHMARK_DATA.domains.map((domain) => `<option value="${domain}">${domain}</option>`).join("")}`;
+  domainSelect.innerHTML = `<option value="">All domains</option>${window.BENCHMARK_DATA.domains.map((domain) => `<option value="${esc(domain)}">${esc(label(domain))}</option>`).join("")}`;
   domainSelect.addEventListener("change", () => {
     state.domain = domainSelect.value;
-    renderLeaderboard();
-    renderPredictionList();
+    refresh();
   });
 
   const yearSlider = document.getElementById("yearSlider");
@@ -225,9 +227,17 @@ function hydrateFilters() {
   yearSlider.addEventListener("input", () => {
     state.yearMax = Number(yearSlider.value);
     yearLabel.textContent = yearSlider.value;
-    renderLeaderboard();
-    renderPredictionList();
+    refresh();
   });
+}
+
+function refresh() {
+  renderLeaderboard();
+  renderPredictionList();
+  if (state.selectedPrediction && !document.querySelector(`.sf-pred[data-id="${CSS.escape(state.selectedPrediction)}"]`)) {
+    state.selectedPrediction = null;
+    renderMatchDetail(null);
+  }
 }
 
 function init() {
@@ -241,5 +251,6 @@ function init() {
 try {
   init();
 } catch (error) {
-  document.body.innerHTML = `<div class="page-shell"><div class="panel"><h2>Application error</h2><p>${error.message}</p></div></div>`;
+  const app = document.getElementById("app");
+  if (app) app.innerHTML = `<div class="sf-panel"><h2>Application error</h2><p>${esc(error.message)}</p></div>`;
 }

@@ -12,88 +12,136 @@
 </script>
 
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>SciFi Prediction Benchmark</title>
-  <link rel="stylesheet" href="./styles.css">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <title>SciFi Prediction Benchmark | CosmoVentures</title>
+  <meta name="description" content="A research benchmark that scores fictional technologies from science fiction against later real ones by specificity, lead time and mechanism. By CosmoVentures.">
+  <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1">
+  <link rel="canonical" href="https://cosmoventures.fr/tools/scifi/">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="CosmoVentures">
+  <meta property="og:locale" content="en_GB">
+  <meta property="og:title" content="SciFi Prediction Benchmark | CosmoVentures">
+  <meta property="og:description" content="How well did science fiction anticipate the technologies that followed? A benchmark scoring fictional technologies against later real ones.">
+  <meta property="og:url" content="https://cosmoventures.fr/tools/scifi/">
+  <meta property="og:image" content="https://cosmoventures.fr/assets/images/og-cosmoventures.jpg">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="CosmoVentures, scientific and AI consulting, Paris">
+  <meta name="twitter:card" content="summary_large_image">
+
+<link rel="icon" href="/assets/cosmoventures.ico">
+<link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-icon-180x180.png">
+<meta name="theme-color" content="#f3f4f8"><meta name="color-scheme" content="light">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;900&family=Roboto+Mono:wght@300;400;700&display=swap">
+<link rel="stylesheet" href="/assets/css/home.css">
+<link rel="stylesheet" href="/assets/css/cosmoventures.css">
+<link rel="stylesheet" href="/assets/css/tool.css">
+<script src="/assets/js/display.js"></script>
+
+<link rel="stylesheet" href="./styles.css">
 </head>
-<body>
-<a href="/tools/" style="display:block;padding:8px 16px;font:13px/1.4 system-ui,sans-serif;color:#454a63;background:#f3f4f8;text-decoration:none;border-bottom:1px solid rgba(19,21,43,.13)">← CosmoVentures · Tools</a>
-  <div class="page-shell">
-    <header class="hero">
-      <div>
-        <p class="eyebrow">Research Prototype</p>
-        <h1>SciFi Prediction Benchmark</h1>
-        <p class="lede">A benchmark of technological foresight in science fiction, tracing how fictional devices, infrastructures, and social systems line up with later real-world technologies.</p>
-      </div>
-      <div class="hero-meta">
-        <div class="hero-panel">
-          <span>What is measured</span>
-          <strong>Specificity, lead time, functional fit, mechanism, and societal role</strong>
-        </div>
-      </div>
-    </header>
 
-    <section class="method-grid">
-      <article class="method-card">
-        <span class="method-kicker">Idea</span>
-        <h2>Turn passages into structured predictions</h2>
-        <p>Each entry is represented as a prediction with a domain, description, implied mechanism, social role, and an initial specificity estimate.</p>
-      </article>
-      <article class="method-card">
-        <span class="method-kicker">Estimation</span>
-        <h2>Compare fiction against candidate technologies</h2>
-        <p>The benchmark combines semantic similarity with rule-based domain and phrase overlap to rank plausible real-world counterparts.</p>
-      </article>
-      <article class="method-card">
-        <span class="method-kicker">Scoring</span>
-        <h2>Reward accuracy, detail, and anticipation</h2>
-        <p>Final scores blend existence, functional, mechanistic, and societal alignment, then adjust for specificity, novelty, lead time, vagueness, and redundancy.</p>
-      </article>
-    </section>
-
-    <section class="control-bar">
-      <label>
-        Domain
-        <select id="domainFilter"></select>
-      </label>
-      <label>
-        Timeline Cutoff
-        <input id="yearSlider" type="range" min="1860" max="2000" step="1" value="2000">
-        <span id="yearLabel">2000</span>
-      </label>
-    </section>
-
-    <main class="dashboard-grid">
-      <section class="panel">
-        <div class="panel-heading">
-          <h2>Leaderboard</h2>
-          <p>Average adjusted prediction score by author</p>
-        </div>
-        <div id="leaderboard" class="leaderboard"></div>
-      </section>
-
-      <section class="panel">
-        <div class="panel-heading">
-          <h2>Author Profile</h2>
-          <p>Drill into domains, subscores, and matched technologies</p>
-        </div>
-        <div id="authorProfile" class="author-profile empty-state">Select an author from the leaderboard.</div>
-      </section>
-
-      <section class="panel wide">
-        <div class="panel-heading">
-          <h2>Prediction Explorer</h2>
-          <p>Inspect individual prediction-to-technology comparisons</p>
-        </div>
-        <div class="prediction-layout">
-          <div id="predictionList" class="prediction-list"></div>
-          <div id="matchDetail" class="match-detail empty-state">Select a prediction to view the top candidate match and subscore breakdown.</div>
-        </div>
-      </section>
-    </main>
+<body class="cv tool-page">
+<a class="skip" href="#app">Skip to content</a>
+<nav class="site" aria-label="Main">
+  <div class="navin">
+    <a class="brand" href="/"><img src="/assets/images/cosmoventures-logo-192.png" alt="" width="28" height="28">CosmoVentures</a>
+    <ul id="menu">
+      <li><a href="/#services">Services</a></li>
+      <li><a href="/#process">Process</a></li>
+      <li><a href="/#work">Work</a></li>
+      <li><a href="/tools/" aria-current="page">Tools</a></li>
+      <li><a href="/#research">Research</a></li>
+      <li><a href="/#contact">Contact</a></li>
+      <li><a href="/#about">About</a></li>
+    </ul>
+    <button class="burger" id="burger" aria-expanded="false" aria-controls="menu">Menu</button>
   </div>
+</nav>
 
-  <script src="./site-data.js"></script>
-  <script src="./app.js"></script>
+<header class="tool-intro cv-wrap">
+  <p class="eyebrow"><a href="/tools/">CosmoVentures · Tools</a></p>
+  <h1>SciFi Prediction Benchmark</h1>
+  <p class="cv-sub">How well did science fiction anticipate the technologies that followed?</p>
+  <p class="tool-why">A research benchmark that scores fictional technologies against later real ones by specificity, lead time and mechanism. It shows the kind of evaluation design CosmoVentures brings to AI evaluation and to foresight work.</p>
+</header>
+
+<main class="cv-wrap tool-main">
+  <div id="app" class="tool-app">
+    <section class="sf-method" aria-labelledby="sf-method-h">
+      <h2 id="sf-method-h">How scores are built</h2>
+      <p class="sf-measured"><span class="sf-label">What is measured</span> Specificity, lead time, functional fit, mechanism and societal role.</p>
+      <div class="sf-cards">
+        <article class="sf-card">
+          <span class="sf-label">Idea</span>
+          <h3>Turn passages into structured predictions</h3>
+          <p>Each entry is represented as a prediction with a domain, description, implied mechanism, social role and an initial specificity estimate.</p>
+        </article>
+        <article class="sf-card">
+          <span class="sf-label">Estimation</span>
+          <h3>Compare fiction against candidate technologies</h3>
+          <p>The benchmark combines semantic similarity with rule-based domain and phrase overlap to rank plausible real-world counterparts.</p>
+        </article>
+        <article class="sf-card">
+          <span class="sf-label">Scoring</span>
+          <h3>Reward accuracy, detail and anticipation</h3>
+          <p>Final scores blend existence, functional, mechanistic and societal alignment, then adjust for specificity, novelty, lead time, vagueness and redundancy.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="sf-controls" aria-label="Filters">
+      <div class="sf-field">
+        <label for="domainFilter">Domain</label>
+        <select id="domainFilter"></select>
+      </div>
+      <div class="sf-field sf-year">
+        <label for="yearSlider">Timeline cutoff <output id="yearLabel" for="yearSlider">2000</output></label>
+        <input id="yearSlider" type="range" min="1860" max="2000" step="1" value="2000">
+        <span class="sf-ticks" aria-hidden="true"><span>1860</span><span>2000</span></span>
+      </div>
+      <p class="sf-count" id="resultCount" role="status" aria-live="polite"></p>
+    </section>
+
+    <div class="sf-grid">
+      <section class="sf-panel" aria-labelledby="sf-lb-h">
+        <h2 id="sf-lb-h">Leaderboard</h2>
+        <p class="sf-sub">Average adjusted prediction score by author, from 0 to 100. Select an author to open the profile.</p>
+        <ol id="leaderboard" class="sf-leaderboard"></ol>
+      </section>
+
+      <section class="sf-panel" aria-labelledby="sf-ap-h">
+        <h2 id="sf-ap-h">Author profile</h2>
+        <p class="sf-sub">Domains, subscores and matched technologies</p>
+        <div id="authorProfile" class="sf-empty">Select an author from the leaderboard.</div>
+      </section>
+
+      <section class="sf-panel sf-wide" aria-labelledby="sf-pe-h">
+        <h2 id="sf-pe-h">Prediction explorer</h2>
+        <p class="sf-sub">Inspect individual prediction-to-technology comparisons. Scores run from 0 to 100.</p>
+        <div class="sf-explorer">
+          <ul id="predictionList" class="sf-list"></ul>
+          <div id="matchDetail" class="sf-detail sf-empty" aria-live="polite">Select a prediction to view the top candidate match and subscore breakdown.</div>
+        </div>
+      </section>
+    </div>
+  </div>
+</main>
+
+<section class="cv-wrap tool-cta">
+  <h2>Looking for something like this?</h2>
+  <p>CosmoVentures designs and builds interactive pieces for organisations, from a first prototype to a finished guide.</p>
+  <a class="btn primary" href="/#contact">Discuss a project</a>
+</section>
+
+<footer><span>Cosmoventures SASU · Paris, France · <a class="support" href="https://ko-fi.com/cosmosofia" rel="noopener">Support my work</a></span><a class="flogo" href="/" aria-label="CosmoVentures"><img src="/assets/images/cosmoventures-logo-192.png" alt="CosmoVentures" width="64" height="64"></a><span><a class="support" href="https://sofiagallego.com/">Personal website: sofiagallego.com</a> · © Nefinia</span></footer>
+<script>
+  document.getElementById('burger').addEventListener('click', function(){
+    var m=document.getElementById('menu'), o=m.classList.toggle('open'); this.setAttribute('aria-expanded', String(o));
+  });
+</script>
+<script src="./site-data.js"></script>
+<script src="./app.js"></script>
 </body>
 </html>
