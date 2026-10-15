@@ -5,7 +5,7 @@
 
   var UI = {
     en: {
-      modeWander: "Free wander", modeConnect: "Connect two terms", startLabel: "Start term", targetLabel: "Target term",
+      modeWander: "Free wander", modeConnect: "Connect two terms", modeMap: "Starter map", modeCards: "Cards", practise: "Practise with cards", startLabel: "Start term", targetLabel: "Target term",
       go: "Start", random: "Surprise me", phStart: "For example: pulsar", phTarget: "For example: music",
       hintWander: "Pick a term, then follow the links that interest you. Keep the terms you want in your glossary.",
       hintConnect: "Pick two terms and find a path from the first to the second, one link at a time. Fewer steps is better.",
@@ -19,7 +19,7 @@
       exportTitle: "My glossary", exportBy: "Made with the Glossary Game by CosmoVentures: https://cosmoventures.fr/tools/glossary/", exportSrc: "Definitions from Wikipedia, available under CC BY-SA 4.0.", visit: "Visit"
     },
     es: {
-      modeWander: "Paseo libre", modeConnect: "Conectar dos términos", startLabel: "Término de inicio", targetLabel: "Término objetivo",
+      modeWander: "Paseo libre", modeConnect: "Conectar dos términos", modeMap: "Mapa de partida", modeCards: "Tarjetas", practise: "Practicar con tarjetas", startLabel: "Término de inicio", targetLabel: "Término objetivo",
       go: "Empezar", random: "Sorpréndeme", phStart: "Por ejemplo: púlsar", phTarget: "Por ejemplo: música",
       hintWander: "Elige un término y sigue los enlaces que te interesen. Guarda en tu glosario los términos que quieras.",
       hintConnect: "Elige dos términos y busca un camino del primero al segundo, un enlace cada vez. Cuantos menos pasos, mejor.",
@@ -33,7 +33,7 @@
       exportTitle: "Mi glosario", exportBy: "Hecho con el Glossary Game de CosmoVentures: https://cosmoventures.fr/tools/glossary/", exportSrc: "Definiciones de Wikipedia, disponibles bajo CC BY-SA 4.0.", visit: "Visitar"
     },
     fr: {
-      modeWander: "Balade libre", modeConnect: "Relier deux termes", startLabel: "Terme de départ", targetLabel: "Terme cible",
+      modeWander: "Balade libre", modeConnect: "Relier deux termes", modeMap: "Réseau de départ", modeCards: "Cartes", practise: "S’entraîner avec les cartes", startLabel: "Terme de départ", targetLabel: "Terme cible",
       go: "Commencer", random: "Surprenez-moi", phStart: "Par exemple : pulsar", phTarget: "Par exemple : musique",
       hintWander: "Choisissez un terme, puis suivez les liens qui vous intéressent. Gardez dans votre glossaire les termes que vous voulez.",
       hintConnect: "Choisissez deux termes et trouvez un chemin du premier au second, un lien à la fois. Moins il y a d'étapes, mieux c'est.",
@@ -47,7 +47,7 @@
       exportTitle: "Mon glossaire", exportBy: "Réalisé avec le Glossary Game de CosmoVentures : https://cosmoventures.fr/tools/glossary/", exportSrc: "Définitions issues de Wikipédia, sous licence CC BY-SA 4.0.", visit: "Visiter"
     },
     de: {
-      modeWander: "Freies Wandern", modeConnect: "Zwei Begriffe verbinden", startLabel: "Startbegriff", targetLabel: "Zielbegriff",
+      modeWander: "Freies Wandern", modeConnect: "Zwei Begriffe verbinden", modeMap: "Startnetz", modeCards: "Karten", practise: "Mit Karten üben", startLabel: "Startbegriff", targetLabel: "Zielbegriff",
       go: "Starten", random: "Überrasch mich", phStart: "Zum Beispiel: Pulsar", phTarget: "Zum Beispiel: Musik",
       hintWander: "Wähle einen Begriff und folge den Links, die dich interessieren. Behalte die Begriffe, die du willst, in deinem Glossar.",
       hintConnect: "Wähle zwei Begriffe und finde einen Weg vom ersten zum zweiten, Link für Link. Weniger Schritte sind besser.",
@@ -63,7 +63,7 @@
   };
 
   var $ = function (id) { return document.getElementById(id); };
-  var S = { lang: "en", mode: "wander", path: [], moves: 0, cur: null, target: null, won: false, nodes: {}, edges: {}, near: [], req: 0 };
+  var S = { lang: "en", mode: "wander", view: "wander", path: [], moves: 0, cur: null, target: null, won: false, nodes: {}, edges: {}, near: [], req: 0 };
   var cacheSum = {}, cacheLinks = {};
   var glossary = loadGlossary();
 
@@ -76,6 +76,7 @@
   function saveGlossary() { try { localStorage.setItem("cv-glossary", JSON.stringify(glossary)); } catch (e) {} }
   function gkey(lang, title) { return lang + "|" + title; }
   function isKept(title) { return glossary.some(function (g) { return g.lang === S.lang && g.title === title; }); }
+  function keptIndex(lang, title) { var i = -1; glossary.forEach(function (g, n) { if (g.lang === lang && g.title === title) i = n; }); return i; }
 
   /* ---------- Wikipedia ---------- */
   function base() { return "https://" + S.lang + ".wikipedia.org"; }
@@ -265,18 +266,27 @@
   function renderGlossary() {
     var dl = $("glossaryList"); dl.innerHTML = "";
     $("glossaryEmpty").hidden = glossary.length > 0;
-    $("exportBtn").disabled = $("clearBtn").disabled = glossary.length === 0;
+    $("exportBtn").disabled = $("clearBtn").disabled = $("practiseBtn").disabled = glossary.length === 0;
     glossary.forEach(function (g, i) {
       var d = document.createElement("div"), dt = document.createElement("dt"), dd = document.createElement("dd");
       var name = document.createElement("span"); name.textContent = g.title + (g.lang !== S.lang ? " (" + g.lang + ")" : "");
       var rm = document.createElement("button"); rm.type = "button"; rm.textContent = t("remove"); rm.setAttribute("aria-label", t("remove") + " " + g.title);
       rm.addEventListener("click", function () { glossary.splice(i, 1); saveGlossary(); if (S.cur) render(); else renderGlossary(); });
       dt.appendChild(name); dt.appendChild(rm);
-      dd.textContent = g.description ? g.description + ". " + firstSentence(g.extract) : firstSentence(g.extract);
+      dd.textContent = meaningOf(g);
       d.appendChild(dt); d.appendChild(dd); dl.appendChild(d);
     });
+    document.dispatchEvent(new Event("gg:glossary"));
   }
   function firstSentence(x) { var m = (x || "").match(/^.*?[.!?](\s|$)/); return (m ? m[0] : x || "").trim(); }
+  // starter words keep their whole meaning; Wikipedia terms keep a short description and the first sentence
+  function meaningOf(g) { if (g.starter) return g.extract || ""; var fs = firstSentence(g.extract); return g.description ? g.description + ". " + fs : fs; }
+  function toggleEntry(entry) {
+    var i = keptIndex(entry.lang, entry.title);
+    if (i >= 0) glossary.splice(i, 1); else glossary.push(entry);
+    saveGlossary(); if (S.cur) render(); else renderGlossary();
+    return i < 0;
+  }
   function toggleKeep() {
     var s = cacheSum[gkey(S.lang, S.cur)]; if (!s) return;
     var i = -1; glossary.forEach(function (g, n) { if (g.lang === S.lang && g.title === s.title) i = n; });
@@ -286,7 +296,7 @@
   }
   function exportMd() {
     var L = [ "# " + t("exportTitle"), "", t("exportBy"), "", t("exportSrc"), "" ];
-    glossary.forEach(function (g) { L.push("## " + g.title, "", g.extract || g.description || "", "", g.url, ""); });
+    glossary.forEach(function (g) { L.push("## " + g.title, "", g.extract || g.description || "", ""); if (g.url) L.push(g.url, ""); });
     var blob = new Blob([L.join("\n")], { type: "text/markdown;charset=utf-8" }), a = document.createElement("a");
     a.href = URL.createObjectURL(blob); a.download = "glossary.md"; document.body.appendChild(a); a.click();
     setTimeout(function () { URL.revokeObjectURL(a.href); a.remove(); }, 500);
@@ -300,12 +310,19 @@
     $("modeHint").textContent = S.mode === "connect" ? t("hintConnect") : t("hintWander");
     document.querySelectorAll(".gg-lang").forEach(function (b) { var on = b.getAttribute("data-lang") === S.lang; b.classList.toggle("active", on); b.setAttribute("aria-pressed", String(on)); });
     if (S.cur) render(); else renderGlossary();
+    document.dispatchEvent(new Event("gg:lang"));
   }
+  // four views share the top buttons: two ways to wander (they share the start form), the starter map and the cards
   function setMode(m) {
-    S.mode = m;
-    document.querySelectorAll(".gg-chip").forEach(function (b) { var on = b.getAttribute("data-mode") === m; b.classList.toggle("active", on); b.setAttribute("aria-pressed", String(on)); });
-    $("targetField").hidden = m !== "connect";
-    $("modeHint").textContent = m === "connect" ? t("hintConnect") : t("hintWander");
+    var study = m === "map" || m === "cards";
+    if (!study) S.mode = m;
+    S.view = m;
+    document.querySelectorAll("#modeChips .gg-chip").forEach(function (b) { var on = b.getAttribute("data-mode") === m; b.classList.toggle("active", on); b.setAttribute("aria-pressed", String(on)); });
+    $("targetField").hidden = S.mode !== "connect";
+    $("wanderForm").hidden = study; $("wanderOut").hidden = study; $("studyPane").hidden = !study;
+    $("modeHint").textContent = S.mode === "connect" ? t("hintConnect") : t("hintWander");
+    try { if (window.history && history.replaceState) history.replaceState(null, "", study ? "#" + m : location.pathname + location.search); } catch (e) {}
+    document.dispatchEvent(new CustomEvent("gg:view", { detail: m }));
   }
   function start(startTerm, targetTerm) {
     resetGame();
@@ -321,7 +338,50 @@
     });
   }
 
-  document.querySelectorAll(".gg-chip").forEach(function (b) { b.addEventListener("click", function () { setMode(b.getAttribute("data-mode")); }); });
+  /* the first English Wikipedia title that exists, followed to the current language through the language links; the word itself is the fallback */
+  function starterTitle(term, cands) {
+    if (!cands || !cands.length) return resolveTerm(term);
+    var L = S.lang, url = "https://en.wikipedia.org/w/api.php?action=query&redirects=1&format=json&formatversion=2&origin=*&titles=" + encodeURIComponent(cands.join("|")) + (L !== "en" ? "&prop=langlinks&lllang=" + L + "&lllimit=50" : "");
+    return api(url).then(function (j) {
+      var q = j.query || {}, map = {}, pages = {};
+      (q.normalized || []).forEach(function (n) { map[n.from] = n.to; });
+      (q.redirects || []).forEach(function (r) { map[r.from] = r.to; });
+      (q.pages || []).forEach(function (p) { pages[p.title] = p; });
+      for (var i = 0; i < cands.length; i++) {
+        var name = cands[i]; name = map[name] || name; name = map[name] || name;
+        var p = pages[name]; if (!p || p.missing) continue;
+        if (L === "en") return p.title;
+        if (p.langlinks && p.langlinks[0]) return p.langlinks[0].title;
+      }
+      return null;
+    }, function () { return null; }).then(function (title) { return title || resolveTerm(term); });
+  }
+  function toApp() {
+    var calm = document.documentElement.hasAttribute("data-ds-calm") || (window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches);
+    var y = $("startForm").closest("#app").getBoundingClientRect().top + window.pageYOffset - 64;
+    try { window.scrollTo({ top: Math.max(0, y), behavior: calm ? "auto" : "smooth" }); } catch (e) { window.scrollTo(0, Math.max(0, y)); }
+  }
+  function wanderFrom(title, lang) {
+    if (lang && lang !== S.lang && UI[lang]) { S.lang = lang; resetGame(); setStatus(""); applyLang(); }
+    setMode("wander"); toApp();
+    $("startInput").value = title;
+    return start(title, "");
+  }
+  function wanderStarter(term, cands) {
+    setMode("wander"); toApp();
+    resetGame(); setStatus(t("loading"));
+    return starterTitle(term, cands).then(function (title) { $("startInput").value = title; return start(title, ""); }).catch(function (e) {
+      if (e && e.notfound) setStatus(t("errNotFound", { t: e.notfound }), "err"); else setStatus(t("errNet"), "err");
+    });
+  }
+  /* what the starter map and the cards (study.js) use */
+  window.GG = {
+    lang: function () { return S.lang; }, view: function () { return S.view; }, setView: setMode,
+    glossary: function () { return glossary; }, isKept: function (title, lang) { return keptIndex(lang, title) >= 0; },
+    toggle: toggleEntry, meaning: meaningOf, wanderFrom: wanderFrom, wanderStarter: wanderStarter
+  };
+
+  document.querySelectorAll("#modeChips .gg-chip").forEach(function (b) { b.addEventListener("click", function () { setMode(b.getAttribute("data-mode")); }); });
   document.querySelectorAll(".gg-lang").forEach(function (b) { b.addEventListener("click", function () { S.lang = b.getAttribute("data-lang"); resetGame(); setStatus(""); applyLang(); }); });
   $("startForm").addEventListener("submit", function (ev) {
     ev.preventDefault();
@@ -348,6 +408,7 @@
   });
   $("keepBtn").addEventListener("click", toggleKeep);
   $("exportBtn").addEventListener("click", exportMd);
+  $("practiseBtn").addEventListener("click", function () { if (window.GGStudy) window.GGStudy.openCards("kept"); });
   $("clearBtn").addEventListener("click", function () { if (glossary.length && window.confirm(t("confirmClear"))) { glossary = []; saveGlossary(); if (S.cur) render(); else renderGlossary(); } });
 
   /* ?lang=fr&start=pulsar opens the game on a term */
@@ -355,6 +416,7 @@
     var q = new URLSearchParams(location.search), l = q.get("lang");
     if (l && UI[l]) S.lang = l;
     applyLang();
+    var h = (location.hash || "").replace("#", ""); if (h === "map" || h === "cards") setMode(h);
     var st = q.get("start"), tg = q.get("target");
     if (st) { $("startInput").value = st; if (tg) { setMode("connect"); $("targetInput").value = tg; } start(st, tg || ""); }
   } catch (e) { applyLang(); }

@@ -15,21 +15,21 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Glossary Game | CosmoVentures</title>
-<meta name="description" content="Glossary Game: start from any term, wander through Wikipedia, keep the words you meet and watch a graph of them grow. A free tool by CosmoVentures.">
+<meta name="description" content="Glossary Game: start from any term, wander through Wikipedia, keep the words you meet and learn them as cards. A starter map of 60 words is ready to explore. A free tool by CosmoVentures.">
 <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1">
 <meta name="author" content="Sofia Gallego">
 <link rel="canonical" href="https://cosmoventures.fr/tools/glossary/">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="CosmoVentures">
 <meta property="og:title" content="Glossary Game | CosmoVentures">
-<meta property="og:description" content="Start from any term, wander through Wikipedia and build your own glossary as a graph.">
+<meta property="og:description" content="Start from any term, wander through Wikipedia, build your own glossary as a graph and learn it as cards.">
 <meta property="og:url" content="https://cosmoventures.fr/tools/glossary/">
 <meta property="og:image" content="https://cosmoventures.fr/assets/images/og-cosmoventures.jpg">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Glossary Game | CosmoVentures">
-<meta name="twitter:description" content="Start from any term, wander through Wikipedia and build your own glossary as a graph.">
+<meta name="twitter:description" content="Start from any term, wander through Wikipedia, build your own glossary as a graph and learn it as cards.">
 <meta name="twitter:image" content="https://cosmoventures.fr/assets/images/og-cosmoventures.jpg">
 
 <link rel="icon" href="/assets/cosmoventures.ico">
@@ -41,6 +41,7 @@
 <link rel="stylesheet" href="/assets/css/cosmoventures.css">
 <link rel="stylesheet" href="/assets/css/tool.css">
 <link rel="stylesheet" href="css/styles.css">
+<link rel="stylesheet" href="css/study.css">
 <script src="/assets/js/display.js"></script>
 </head>
 
@@ -65,8 +66,8 @@
 <header class="tool-intro cv-wrap">
   <p class="eyebrow"><a href="/tools/">CosmoVentures · Tools</a></p>
   <h1>Glossary Game</h1>
-  <p class="cv-sub">Start from any term, wander through Wikipedia and keep the words you meet.</p>
-  <p class="tool-why">Every term and definition comes from Wikipedia as you go, so a glossary can begin anywhere. It shows how a knowledge map can be grown live from an open source, one connection at a time.</p>
+  <p class="cv-sub">Start from any term, wander through Wikipedia, keep the words you meet and learn them as cards.</p>
+  <p class="tool-why">Every term and definition comes from Wikipedia as you go, so a glossary can begin anywhere. It shows how a knowledge map can be grown live from an open source, one connection at a time. A starter map of 60 words is ready to explore, and the words you keep turn into flip cards.</p>
 </header>
 
 <main class="cv-wrap tool-main">
@@ -74,9 +75,11 @@
 
     <section class="gg-card gg-controls" aria-label="Start">
       <div class="gg-top">
-        <div class="gg-modes" role="group" aria-label="Mode">
+        <div class="gg-modes" id="modeChips" role="group" aria-label="Mode">
           <button type="button" class="gg-chip active" data-mode="wander" aria-pressed="true" data-i="modeWander">Free wander</button>
           <button type="button" class="gg-chip" data-mode="connect" aria-pressed="false" data-i="modeConnect">Connect two terms</button>
+          <button type="button" class="gg-chip" data-mode="map" aria-pressed="false" data-i="modeMap">Starter map</button>
+          <button type="button" class="gg-chip" data-mode="cards" aria-pressed="false" data-i="modeCards">Cards</button>
         </div>
         <div class="gg-langs" role="group" aria-label="Wikipedia language">
           <button type="button" class="gg-lang active" data-lang="en" aria-pressed="true">EN</button>
@@ -85,6 +88,7 @@
           <button type="button" class="gg-lang" data-lang="de" aria-pressed="false">DE</button>
         </div>
       </div>
+      <div id="wanderForm">
       <form id="startForm" class="gg-form" autocomplete="off">
         <label class="gg-field"><span data-i="startLabel">Start term</span><input id="startInput" type="text" data-ph="phStart" placeholder="For example: pulsar" maxlength="80"></label>
         <label class="gg-field" id="targetField" hidden><span data-i="targetLabel">Target term</span><input id="targetInput" type="text" data-ph="phTarget" placeholder="For example: music" maxlength="80"></label>
@@ -94,8 +98,10 @@
         </div>
       </form>
       <p class="gg-hint" id="modeHint"></p>
+      </div>
     </section>
 
+    <div id="wanderOut" class="gg-out">
     <p class="gg-status" id="status" role="status" aria-live="polite"></p>
 
     <div class="gg-play" id="play" hidden>
@@ -118,11 +124,15 @@
         <ul class="gg-near" id="near"></ul>
       </section>
     </div>
+    </div>
+
+    <div id="studyPane" class="gg-study" hidden></div>
 
     <section class="gg-card gg-glossary" id="glossaryCard" aria-label="Glossary">
       <div class="gg-top">
         <h2 class="gg-h2" data-i="glossaryTitle">Your glossary</h2>
         <div class="gg-actions">
+          <button type="button" class="gg-btn small primary" id="practiseBtn" data-i="practise">Practise with cards</button>
           <button type="button" class="gg-btn small" id="exportBtn" data-i="export">Download as Markdown</button>
           <button type="button" class="gg-btn small" id="clearBtn" data-i="clear">Clear</button>
         </div>
@@ -146,6 +156,8 @@
     var m=document.getElementById('menu'), o=m.classList.toggle('open'); this.setAttribute('aria-expanded', String(o));
   });
 </script>
+<script src="js/terms.js"></script>
 <script src="js/app.js"></script>
+<script src="js/study.js"></script>
 </body>
 </html>

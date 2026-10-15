@@ -1,0 +1,109 @@
+/* Glossary Game, study side: the starter map, the A–Z list, the flip cards and the meaning sheet.
+   Every rule is scoped under .tool-app so it sits next to styles.css.
+   Colours come from the site tokens (--card, --ink, --dim, --faint, --glow, --glow-soft, --line); each topic adds its own hue (--h). */
+.tool-app .gg-out, .tool-app .gg-study{display:flex;flex-direction:column;gap:20px;min-width:0}
+.tool-app .gl-panel{display:flex;flex-direction:column;gap:18px;min-width:0}
+.tool-app .gl-sub{display:flex;flex-direction:column;gap:18px;min-width:0}
+.tool-app .gl-intro{margin:0}
+.tool-app .gl-bar{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+.tool-app .gl-wide{width:100%}
+.tool-app .gl-chips .gg-chip{flex:1 1 auto}
+/* selects and search */
+.tool-app .gl-select{width:100%;min-height:44px;padding:10px 12px;font-size:16px;color:var(--ink);background:#fff;border:1px solid var(--line);border-radius:4px}
+.tool-app .gl-select:focus{outline:2px solid var(--glow);outline-offset:1px;border-color:var(--glow)}
+.tool-app .gl-setup{display:grid;grid-template-columns:1.4fr 1fr;gap:12px}
+.tool-app .gl-setup .gg-field{flex:none}
+/* bubbles */
+.tool-app .gl-group{display:flex;flex-direction:column;gap:10px}
+.tool-app .gl-group+.gl-group{margin-top:6px}
+.tool-app .gl-group h3{font-family:var(--mono);font-weight:400;font-size:.8em;letter-spacing:.04em;color:var(--faint);margin:0}
+.tool-app .gl-bubbles{display:flex;flex-wrap:wrap;gap:8px}
+.tool-app .gl-bubbles.center{justify-content:center}
+.tool-app .gl-bubble{--h:230;max-width:100%;min-height:42px;padding:9px 15px;font-size:15px;font-weight:500;line-height:1.25;text-align:left;overflow-wrap:anywhere;cursor:pointer;
+  color:hsl(var(--h) 45% 24%);background:hsl(var(--h) 70% 94%);border:1px solid hsl(var(--h) 40% 80%);border-radius:999px;transition:transform .12s,border-color .2s}
+.tool-app .gl-bubble:hover{border-color:hsl(var(--h) 45% 55%)}
+.tool-app .gl-bubble:active{transform:scale(.96)}
+.tool-app .gl-bubble.kept::before{content:"★ ";color:var(--glow)}
+.tool-app .gl-empty{margin:0;padding:20px 0;color:var(--dim)}
+.tool-app .gl-answer{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.tool-app .gl-answer:has(> :only-child){grid-template-columns:1fr}
+.tool-app .gl-answer .gg-btn{font-size:.95em}
+/* flip card */
+.tool-app .gl-cardbox{display:flex;flex-direction:column;gap:18px;min-width:0}
+.tool-app .gl-stats{display:flex;justify-content:space-between;gap:12px;font-family:var(--mono);font-size:.78em;letter-spacing:.02em;color:var(--faint)}
+.tool-app .gl-flip{perspective:1400px;cursor:pointer;-webkit-user-select:none;user-select:none;width:100%}
+.tool-app .gl-flip-in{display:grid;grid-template-columns:minmax(0,1fr);transform-style:preserve-3d;transition:transform .55s cubic-bezier(.3,.7,.2,1)}
+.tool-app .gl-flip.flipped .gl-flip-in{transform:rotateY(180deg)}
+.tool-app .gl-face{grid-area:1/1;min-width:0;min-height:320px;padding:30px 24px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;text-align:center;
+  backface-visibility:hidden;-webkit-backface-visibility:hidden;background:var(--card);border:1px solid var(--line);border-radius:6px;box-shadow:0 1px 2px rgba(19,21,43,.04),0 8px 24px rgba(19,21,43,.07)}
+.tool-app .gl-face.back{transform:rotateY(180deg);background:#f7f8fc;border-color:rgba(51,70,176,.3)}
+.tool-app .gl-label{font-family:var(--mono);font-size:.78em;letter-spacing:.04em;color:var(--glow)}
+.tool-app .gl-big{font-family:var(--display);font-weight:900;font-size:clamp(28px,6.4vw,40px);line-height:1.15;overflow-wrap:anywhere;hyphens:auto;-webkit-hyphens:auto;text-wrap:balance}
+.tool-app .gl-big.long{font-size:clamp(22px,5.2vw,31px)}
+.tool-app .gl-text{margin:0;max-width:46ch;font-size:1.1em;line-height:1.6;overflow-wrap:anywhere;hyphens:auto;-webkit-hyphens:auto}
+.tool-app .gl-hint{font-size:.88em;color:var(--faint)}
+.tool-app .gl-face a, .tool-app .gl-sheet a{color:var(--glow);font-size:.92em}
+.tool-app .gl-done{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;min-height:280px;padding:30px 22px;text-align:center;
+  background:var(--card);border:1px solid var(--line);border-radius:6px;box-shadow:0 1px 2px rgba(19,21,43,.04),0 8px 24px rgba(19,21,43,.07)}
+.tool-app .gl-done p{margin:0;max-width:44ch}
+.tool-app .gl-done .gl-note{font-family:var(--mono);font-size:.78em;letter-spacing:.04em;color:var(--faint);margin-top:4px}
+.tool-app .gl-done .gl-big{font-size:clamp(26px,5.6vw,34px)}
+.tool-app .gl-done .gl-answer{width:100%;max-width:440px;margin-top:6px}
+/* map of related words */
+.tool-app .gl-fieldrow{flex:none;max-width:420px}
+.tool-app .gl-maphead h2{font-family:var(--display);font-weight:900;font-size:clamp(22px,2.4vw,28px);line-height:1.15;margin:0;text-wrap:balance}
+.tool-app .gl-maphead p{margin:6px 0 0;color:var(--dim);font-size:.95em}
+.tool-app .gl-mapbox{position:relative;background:var(--card);border:1px solid var(--line);border-radius:6px;box-shadow:0 1px 2px rgba(19,21,43,.04),0 8px 24px rgba(19,21,43,.05)}
+.tool-app .gl-maptools{display:flex;justify-content:flex-end;gap:8px;margin-bottom:-6px}
+.tool-app .gl-maptools button{min-width:44px;height:44px;padding:0 12px;font-size:20px;line-height:1;color:var(--ink);background:var(--card);border:1px solid var(--line);border-radius:4px;cursor:pointer}
+.tool-app .gl-maptools button.wide{font-family:var(--mono);font-size:.8em;letter-spacing:.04em}
+.tool-app .gl-maptools button:hover{border-color:var(--glow)}
+.tool-app .gl-mapscroll{overflow:auto;max-height:calc(min(70vh,560px) / var(--ds-zoom,1));min-height:260px;-webkit-overflow-scrolling:touch;border-radius:6px;background-image:radial-gradient(rgba(19,21,43,.15) 1px,transparent 1.3px);background-size:24px 24px}
+.tool-app .gl-mapsizer{position:relative;margin:0 auto}
+.tool-app .gl-mapcanvas{position:absolute;left:0;top:0;transform-origin:0 0}
+.tool-app .gl-edges{position:absolute;left:0;top:0;pointer-events:none;overflow:visible}
+.tool-app .gl-edge{stroke:hsl(var(--h,230) 28% 64%);stroke-width:1.8;transition:opacity .2s}
+.tool-app .gl-edge.cross{stroke:rgba(19,21,43,.32);stroke-dasharray:6 6}
+.tool-app .gl-node{--h:230;position:absolute;left:0;top:0;z-index:2;width:max-content;max-width:196px;padding:8px 14px;font-size:14px;font-weight:500;line-height:1.25;text-align:center;overflow-wrap:break-word;white-space:normal;cursor:pointer;
+  color:hsl(var(--h) 45% 24%);background:hsl(var(--h) 70% 94%);border:1.5px solid hsl(var(--h) 40% 72%);border-radius:22px;transition:opacity .2s,box-shadow .2s}
+.tool-app .measuring .gl-node{visibility:hidden}
+.tool-app .gl-node:hover{border-color:hsl(var(--h) 50% 42%)}
+.tool-app .gl-node.out{background:#fff;border-style:dashed;color:hsl(var(--h) 40% 28%)}
+.tool-app .gl-node.hub{max-width:170px;padding:12px 18px;font-size:16px;font-weight:700;border-radius:26px}
+.tool-app .gl-node small{display:block;margin-top:2px;font-size:12.5px;font-weight:400;opacity:.85}
+.tool-app .gl-node.rel{border-color:hsl(var(--h) 55% 38%);box-shadow:0 0 0 3px hsl(var(--h) 70% 82%)}
+.tool-app .gl-node.sel{z-index:4;border-color:var(--glow);box-shadow:0 0 0 3px var(--glow)}
+.tool-app .gl-node.kept::after{content:"★";position:absolute;top:-9px;right:-6px;width:18px;height:18px;line-height:16px;text-align:center;font-size:11px;color:var(--glow);background:#fff;border:1px solid var(--line);border-radius:50%}
+.tool-app .has-sel .gl-node:not(.sel):not(.rel){opacity:.42}
+.tool-app .has-sel .gl-edge{opacity:.16}
+.tool-app .has-sel .gl-edge.on{opacity:1;stroke:var(--glow);stroke-width:2.6;stroke-dasharray:none}
+.tool-app .gl-maphelp{margin:0;font-size:.9em;color:var(--faint)}
+.tool-app button.gl-tag{cursor:pointer}
+.tool-app button.gl-tag:hover{border-color:hsl(var(--h) 50% 45%)}
+.tool-app .gl-note{margin:6px 0 0;font-family:var(--mono);font-size:.78em;letter-spacing:.04em;color:var(--faint)}
+/* meaning sheet: centred on a large screen, a bottom sheet on a phone */
+.tool-app .gl-sheet{width:calc(100% - 32px);max-width:560px;max-height:calc((100vh - 48px) / var(--ds-zoom,1));padding:0;overflow:auto;color:var(--ink);background:var(--card);border:1px solid var(--line);border-radius:8px;box-shadow:0 24px 60px rgba(19,21,43,.3)}
+.tool-app .gl-sheet::backdrop{background:rgba(19,21,43,.45)}
+.tool-app .gl-sheet[open]{animation:gl-rise .22s ease}
+@keyframes gl-rise{from{opacity:0;transform:translateY(18px)}}
+.tool-app .gl-sheet-in{display:flex;flex-direction:column;gap:18px;padding:26px 24px calc(22px + env(safe-area-inset-bottom))}
+.tool-app .gl-sheet-body{display:flex;flex-direction:column;gap:10px}
+.tool-app .gl-sheet-body h2{font-family:var(--display);font-weight:900;font-size:clamp(26px,5vw,32px);line-height:1.15;margin:0;overflow-wrap:anywhere}
+.tool-app .gl-sheet-body p{margin:0;font-size:1.08em;line-height:1.6;overflow-wrap:anywhere}
+.tool-app .gl-sheet-body a{align-self:flex-start}
+.tool-app .gl-tag{--h:230;align-self:flex-start;padding:3px 11px;font-family:var(--mono);font-size:.78em;letter-spacing:.04em;color:hsl(var(--h) 45% 24%);background:hsl(var(--h) 70% 94%);border:1px solid hsl(var(--h) 40% 80%);border-radius:999px}
+.tool-app .gl-sheet-actions{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.tool-app .gl-sheet-actions .gg-btn{font-size:.9em}
+.tool-app .gl-sheet-actions .gl-close{grid-column:1/-1}
+@media (max-width:640px){.tool-app .gl-mapscroll{max-height:calc(min(60vh,500px) / var(--ds-zoom,1))}
+.tool-app .gl-face{min-height:300px;padding:26px 18px}
+.tool-app .gl-sheet{width:100%;max-width:none;max-height:calc(86vh / var(--ds-zoom,1));margin:auto 0 0;border-width:1px 0 0;border-radius:16px 16px 0 0}
+.tool-app .gl-sheet[open]{animation-name:gl-rise-up}
+  @keyframes gl-rise-up{from{transform:translateY(40px);opacity:.4}}
+}
+@media (max-width:480px){.tool-app .gl-setup{grid-template-columns:1fr}}
+@media (prefers-reduced-motion:reduce){.tool-app .gl-flip-in, .tool-app .gl-bubble, .tool-app .gl-node, .tool-app .gl-edge{transition:none}
+.tool-app .gl-sheet[open]{animation:none}}
+html[data-ds-calm] .tool-app .gl-flip-in, html[data-ds-calm] .tool-app .gl-bubble, html[data-ds-calm] .tool-app .gl-node, html[data-ds-calm] .tool-app .gl-edge{transition:none}
+html[data-ds-calm] .tool-app .gl-sheet[open]{animation:none}
+
