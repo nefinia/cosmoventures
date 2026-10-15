@@ -25,8 +25,8 @@ Contact: contact form at https://cosmoventures.fr/#contact or email contact@cosm
 
 ## Selected work
 
-- [Nançay Radio Observatory interactive guide](https://sofiagallego.com/nancay/): trilingual guide to radio astronomy made for a client
-- [SciFi Prediction Benchmark](https://sofiagallego.com/scifi/index.html): research benchmark on how fictional technologies anticipate real ones
+- [Nançay Radio Observatory interactive guide](https://cosmoventures.fr/tools/nancay/): trilingual guide to radio astronomy made for a client
+- [SciFi Prediction Benchmark](https://cosmoventures.fr/tools/scifi/): research benchmark on how fictional technologies anticipate real ones
 - [SensoryVerse](https://sofiagallego.com/SensoryVerse/index.html): adaptive learning playground using AI, mini-games and focus music
 - [Science-inspired games](https://sofiagallego.com/games/index.html) and the astronomy board game [Cosmoneo](https://sofiagallego.com/cosmoneo.html)
 - Research background with MUSE, KCWI, HST and LSST-related data, across Chile, Switzerland, the United States and France

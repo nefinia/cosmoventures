@@ -48,4 +48,20 @@
     <xhtml:link rel="alternate" hreflang="es" href="https://cosmoventures.fr/es/tools/"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://cosmoventures.fr/tools/"/>
   </url>
+  <url>
+    <loc>https://cosmoventures.fr/tools/nancay/</loc>
+    <lastmod>2026-10-15</lastmod>
+  </url>
+  <url>
+    <loc>https://cosmoventures.fr/tools/wikiwander/</loc>
+    <lastmod>2026-10-15</lastmod>
+  </url>
+  <url>
+    <loc>https://cosmoventures.fr/tools/scifi/</loc>
+    <lastmod>2026-10-15</lastmod>
+  </url>
+  <url>
+    <loc>https://cosmoventures.fr/tools/perceptual-rendering/</loc>
+    <lastmod>2026-10-15</lastmod>
+  </url>
 </urlset>
