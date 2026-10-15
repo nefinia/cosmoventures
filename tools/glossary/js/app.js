@@ -1,0 +1,361 @@
+/* Glossary Game. Terms, definitions and links come live from Wikipedia (CC BY-SA). Nothing is stored on a server;
+   the glossary lives in this browser (localStorage "cv-glossary"). */
+(function () {
+  "use strict";
+
+  var UI = {
+    en: {
+      modeWander: "Free wander", modeConnect: "Connect two terms", startLabel: "Start term", targetLabel: "Target term",
+      go: "Start", random: "Surprise me", phStart: "For example: pulsar", phTarget: "For example: music",
+      hintWander: "Pick a term, then follow the links that interest you. Keep the terms you want in your glossary.",
+      hintConnect: "Pick two terms and find a path from the first to the second, one link at a time. Fewer steps is better.",
+      legVisited: "Visited", legCurrent: "Current", legNear: "Next steps", legKept: "Kept",
+      back: "← Back", keep: "☆ Keep in glossary", kept: "★ Kept", article: "Article ↗", nextSteps: "Where to next",
+      glossaryTitle: "Your glossary", export: "Download as Markdown", clear: "Clear", glossaryEmpty: "Terms you keep will appear here, with their definitions.",
+      remove: "Remove", loading: "Loading from Wikipedia…", errNet: "Wikipedia cannot be reached. Check your connection and try again.",
+      errNotFound: "No article found for “{t}”. Try another word.", needStart: "Type a start term, or press Surprise me.", needTarget: "Type a target term for the second field.",
+      noNeighbours: "No links found in the opening of this article.", stepsFmt: "Step {n}", targetIs: "Target: {t}",
+      win: "You reached {t} in {n} steps.", confirmClear: "Remove every term from your glossary?", graphLabel: "Graph of the terms you have visited",
+      exportTitle: "My glossary", exportBy: "Made with the Glossary Game by CosmoVentures: https://cosmoventures.fr/tools/glossary/", exportSrc: "Definitions from Wikipedia, available under CC BY-SA 4.0.", visit: "Visit"
+    },
+    es: {
+      modeWander: "Paseo libre", modeConnect: "Conectar dos términos", startLabel: "Término de inicio", targetLabel: "Término objetivo",
+      go: "Empezar", random: "Sorpréndeme", phStart: "Por ejemplo: púlsar", phTarget: "Por ejemplo: música",
+      hintWander: "Elige un término y sigue los enlaces que te interesen. Guarda en tu glosario los términos que quieras.",
+      hintConnect: "Elige dos términos y busca un camino del primero al segundo, un enlace cada vez. Cuantos menos pasos, mejor.",
+      legVisited: "Visitado", legCurrent: "Actual", legNear: "Próximos pasos", legKept: "Guardado",
+      back: "← Atrás", keep: "☆ Guardar en el glosario", kept: "★ Guardado", article: "Artículo ↗", nextSteps: "Hacia dónde seguir",
+      glossaryTitle: "Tu glosario", export: "Descargar en Markdown", clear: "Vaciar", glossaryEmpty: "Los términos que guardes aparecerán aquí, con sus definiciones.",
+      remove: "Quitar", loading: "Cargando desde Wikipedia…", errNet: "No se puede acceder a Wikipedia. Revisa tu conexión e inténtalo de nuevo.",
+      errNotFound: "No hay artículo para «{t}». Prueba con otra palabra.", needStart: "Escribe un término de inicio o pulsa Sorpréndeme.", needTarget: "Escribe un término objetivo en el segundo campo.",
+      noNeighbours: "No hay enlaces en la apertura de este artículo.", stepsFmt: "Paso {n}", targetIs: "Objetivo: {t}",
+      win: "Llegaste a {t} en {n} pasos.", confirmClear: "¿Quitar todos los términos de tu glosario?", graphLabel: "Grafo de los términos que has visitado",
+      exportTitle: "Mi glosario", exportBy: "Hecho con el Glossary Game de CosmoVentures: https://cosmoventures.fr/tools/glossary/", exportSrc: "Definiciones de Wikipedia, disponibles bajo CC BY-SA 4.0.", visit: "Visitar"
+    },
+    fr: {
+      modeWander: "Balade libre", modeConnect: "Relier deux termes", startLabel: "Terme de départ", targetLabel: "Terme cible",
+      go: "Commencer", random: "Surprenez-moi", phStart: "Par exemple : pulsar", phTarget: "Par exemple : musique",
+      hintWander: "Choisissez un terme, puis suivez les liens qui vous intéressent. Gardez dans votre glossaire les termes que vous voulez.",
+      hintConnect: "Choisissez deux termes et trouvez un chemin du premier au second, un lien à la fois. Moins il y a d'étapes, mieux c'est.",
+      legVisited: "Visité", legCurrent: "Actuel", legNear: "Étapes suivantes", legKept: "Gardé",
+      back: "← Retour", keep: "☆ Garder dans le glossaire", kept: "★ Gardé", article: "Article ↗", nextSteps: "Où aller ensuite",
+      glossaryTitle: "Votre glossaire", export: "Télécharger en Markdown", clear: "Vider", glossaryEmpty: "Les termes que vous gardez apparaîtront ici, avec leurs définitions.",
+      remove: "Retirer", loading: "Chargement depuis Wikipédia…", errNet: "Wikipédia est inaccessible. Vérifiez votre connexion et réessayez.",
+      errNotFound: "Aucun article trouvé pour « {t} ». Essayez un autre mot.", needStart: "Saisissez un terme de départ, ou appuyez sur Surprenez-moi.", needTarget: "Saisissez un terme cible dans le second champ.",
+      noNeighbours: "Aucun lien dans l'introduction de cet article.", stepsFmt: "Étape {n}", targetIs: "Cible : {t}",
+      win: "Vous avez atteint {t} en {n} étapes.", confirmClear: "Retirer tous les termes de votre glossaire ?", graphLabel: "Graphe des termes visités",
+      exportTitle: "Mon glossaire", exportBy: "Réalisé avec le Glossary Game de CosmoVentures : https://cosmoventures.fr/tools/glossary/", exportSrc: "Définitions issues de Wikipédia, sous licence CC BY-SA 4.0.", visit: "Visiter"
+    },
+    de: {
+      modeWander: "Freies Wandern", modeConnect: "Zwei Begriffe verbinden", startLabel: "Startbegriff", targetLabel: "Zielbegriff",
+      go: "Starten", random: "Überrasch mich", phStart: "Zum Beispiel: Pulsar", phTarget: "Zum Beispiel: Musik",
+      hintWander: "Wähle einen Begriff und folge den Links, die dich interessieren. Behalte die Begriffe, die du willst, in deinem Glossar.",
+      hintConnect: "Wähle zwei Begriffe und finde einen Weg vom ersten zum zweiten, Link für Link. Weniger Schritte sind besser.",
+      legVisited: "Besucht", legCurrent: "Aktuell", legNear: "Nächste Schritte", legKept: "Behalten",
+      back: "← Zurück", keep: "☆ Im Glossar behalten", kept: "★ Behalten", article: "Artikel ↗", nextSteps: "Wohin als Nächstes",
+      glossaryTitle: "Dein Glossar", export: "Als Markdown herunterladen", clear: "Leeren", glossaryEmpty: "Begriffe, die du behältst, erscheinen hier mit ihren Definitionen.",
+      remove: "Entfernen", loading: "Lade von Wikipedia …", errNet: "Wikipedia ist nicht erreichbar. Prüfe deine Verbindung und versuche es erneut.",
+      errNotFound: "Kein Artikel für „{t}“ gefunden. Versuche ein anderes Wort.", needStart: "Gib einen Startbegriff ein oder drücke Überrasch mich.", needTarget: "Gib im zweiten Feld einen Zielbegriff ein.",
+      noNeighbours: "Keine Links in der Einleitung dieses Artikels.", stepsFmt: "Schritt {n}", targetIs: "Ziel: {t}",
+      win: "Du hast {t} in {n} Schritten erreicht.", confirmClear: "Alle Begriffe aus deinem Glossar entfernen?", graphLabel: "Graph der besuchten Begriffe",
+      exportTitle: "Mein Glossar", exportBy: "Erstellt mit dem Glossary Game von CosmoVentures: https://cosmoventures.fr/tools/glossary/", exportSrc: "Definitionen aus Wikipedia, verfügbar unter CC BY-SA 4.0.", visit: "Besuchen"
+    }
+  };
+
+  var $ = function (id) { return document.getElementById(id); };
+  var S = { lang: "en", mode: "wander", path: [], moves: 0, cur: null, target: null, won: false, nodes: {}, edges: {}, near: [], req: 0 };
+  var cacheSum = {}, cacheLinks = {};
+  var glossary = loadGlossary();
+
+  function t(k, v) {
+    var s = (UI[S.lang] || UI.en)[k] || UI.en[k] || k;
+    if (v) Object.keys(v).forEach(function (n) { s = s.replace("{" + n + "}", v[n]); });
+    return s;
+  }
+  function loadGlossary() { try { var a = JSON.parse(localStorage.getItem("cv-glossary")); return Array.isArray(a) ? a : []; } catch (e) { return []; } }
+  function saveGlossary() { try { localStorage.setItem("cv-glossary", JSON.stringify(glossary)); } catch (e) {} }
+  function gkey(lang, title) { return lang + "|" + title; }
+  function isKept(title) { return glossary.some(function (g) { return g.lang === S.lang && g.title === title; }); }
+
+  /* ---------- Wikipedia ---------- */
+  function base() { return "https://" + S.lang + ".wikipedia.org"; }
+  function api(url) {
+    return fetch(url, { headers: { Accept: "application/json" } }).then(function (r) {
+      if (!r.ok) { var e = new Error("http " + r.status); e.status = r.status; throw e; }
+      return r.json();
+    });
+  }
+  function summary(title) {
+    var k = gkey(S.lang, title);
+    if (cacheSum[k]) return Promise.resolve(cacheSum[k]);
+    return api(base() + "/api/rest_v1/page/summary/" + encodeURIComponent(title.replace(/ /g, "_")) + "?redirect=true").then(function (j) {
+      var s = {
+        title: j.title || title, description: j.description || "", extract: j.extract || "",
+        url: (j.content_urls && j.content_urls.desktop && j.content_urls.desktop.page) || (base() + "/wiki/" + encodeURIComponent((j.title || title).replace(/ /g, "_")))
+      };
+      cacheSum[k] = s; cacheSum[gkey(S.lang, s.title)] = s;
+      return s;
+    });
+  }
+  var NOISE = /^(\d{1,4}( \(.*\))?|(January|February|March|April|May|June|July|August|September|October|November|December|enero|febrero|marzo|abril|mayo|junio|julio|agosto|septiembre|octubre|noviembre|diciembre|janvier|février|mars|avril|mai|juin|juillet|août|septembre|octobre|novembre|décembre|Januar|Februar|März|Juni|Juli|Dezember) \d{1,2}|\d{1,2} (de )?[a-zéûäü]+( de \d{4})?)$/i;
+  function leadLinks(title) {
+    var k = gkey(S.lang, title);
+    if (cacheLinks[k]) return Promise.resolve(cacheLinks[k]);
+    var url = base() + "/w/api.php?action=parse&page=" + encodeURIComponent(title) + "&prop=links&section=0&redirects=1&format=json&formatversion=2&origin=*";
+    return api(url).then(function (j) {
+      var seen = {}, out = [];
+      ((j.parse && j.parse.links) || []).forEach(function (l) {
+        if (l.ns !== 0 || l.exists === false) return;
+        var n = l.title;
+        if (!n || seen[n] || n === title || NOISE.test(n)) return;
+        seen[n] = 1; out.push(n);
+      });
+      out = out.slice(0, 12);
+      cacheLinks[k] = out;
+      return out;
+    });
+  }
+  function resolveTerm(term) {
+    var q = term.trim();
+    return api(base() + "/w/api.php?action=opensearch&search=" + encodeURIComponent(q) + "&limit=1&namespace=0&format=json&origin=*").then(function (j) {
+      var hit = j && j[1] && j[1][0];
+      if (!hit) { var e = new Error("notfound"); e.notfound = q; throw e; }
+      return hit;
+    });
+  }
+  function randomTerm() { return api(base() + "/api/rest_v1/page/random/summary").then(function (j) { return j.title; }); }
+
+  /* ---------- state ---------- */
+  function resetGame() {
+    S.path = []; S.moves = 0; S.cur = null; S.won = false; S.nodes = {}; S.edges = {}; S.near = []; S.req++;
+    $("play").hidden = true; $("graph").innerHTML = "";
+  }
+  function addEdge(a, b, kind) {
+    if (a === b) return;
+    var k = a < b ? a + "\u0001" + b : b + "\u0001" + a;
+    var e = S.edges[k];
+    if (!e) S.edges[k] = { a: a, b: b, kind: kind };
+    else if (kind === "path") e.kind = "path";
+  }
+  function ensureNode(title, near) {
+    var n = S.nodes[title];
+    if (!n) {
+      var p = near && S.nodes[near];
+      n = S.nodes[title] = { title: title, x: (p ? p.x : 360) + (Math.random() - .5) * 60, y: (p ? p.y : 260) + (Math.random() - .5) * 60, vx: 0, vy: 0, visited: false };
+    }
+    return n;
+  }
+
+  function visit(title) {
+    var my = ++S.req;
+    setStatus(t("loading"));
+    return Promise.all([summary(title), leadLinks(title).catch(function () { return []; })]).then(function (res) {
+      if (my !== S.req) return;
+      var s = res[0], links = res[1], key = s.title, prev = S.cur;
+      var node = ensureNode(key, prev); node.visited = true;
+      if (prev && prev !== key) { addEdge(prev, key, "path"); S.moves++; }
+      S.path.push(key); S.cur = key; S.near = links;
+      Object.keys(S.nodes).forEach(function (v) {
+        if (v === key || !S.nodes[v].visited) return;
+        var vl = cacheLinks[gkey(S.lang, v)] || [];
+        if (links.indexOf(v) >= 0 || vl.indexOf(key) >= 0) addEdge(key, v, "link");
+      });
+      if (S.target && key.toLowerCase() === S.target.title.toLowerCase()) S.won = true;
+      $("play").hidden = false;
+      render();
+    }).catch(function (e) {
+      if (my !== S.req) return;
+      setStatus(t("errNet"), "err");
+    });
+  }
+
+  /* ---------- render ---------- */
+  function setStatus(text, cls) {
+    var el = $("status"); el.textContent = ""; if (!text) return;
+    var sp = document.createElement("span"); if (cls) sp.className = cls; sp.textContent = text; el.appendChild(sp);
+  }
+  function updateStatus() {
+    var parts = [];
+    if (S.target) parts.push(t("targetIs", { t: S.target.title + (S.target.description ? " (" + S.target.description + ")" : "") }));
+    if (S.won) setStatus(t("win", { t: S.target.title, n: S.moves }), "win");
+    else setStatus(parts.join(" · "));
+  }
+  function truncate(s, n) { return s.length > n ? s.slice(0, n - 1) + "…" : s; }
+
+  function render() {
+    var s = cacheSum[gkey(S.lang, S.cur)];
+    $("steps").textContent = t("stepsFmt", { n: S.moves });
+    $("termTitle").textContent = s.title;
+    $("termDesc").textContent = s.description;
+    $("termExtract").textContent = s.extract;
+    $("wikiLink").href = s.url;
+    $("backBtn").disabled = S.path.length < 2;
+    var kept = isKept(S.cur);
+    $("keepBtn").textContent = kept ? t("kept") : t("keep");
+    $("keepBtn").classList.toggle("kept", kept);
+    $("keepBtn").setAttribute("aria-pressed", String(kept));
+    var ul = $("near"); ul.innerHTML = "";
+    if (!S.near.length) { var li = document.createElement("li"); li.className = "none"; li.textContent = t("noNeighbours"); ul.appendChild(li); }
+    S.near.forEach(function (n) {
+      var li = document.createElement("li"), b = document.createElement("button");
+      b.type = "button"; b.textContent = n;
+      if (S.nodes[n] && S.nodes[n].visited) b.className = "seen";
+      b.addEventListener("click", function () { visit(n); });
+      li.appendChild(b); ul.appendChild(li);
+    });
+    updateStatus();
+    drawGraph();
+    renderGlossary();
+  }
+
+  /* graph: a small force layout over visited terms plus the next steps of the current one */
+  function visible() {
+    var list = {}, edges = [];
+    Object.keys(S.nodes).forEach(function (k) { if (S.nodes[k].visited) list[k] = S.nodes[k]; });
+    S.near.forEach(function (n) { list[n] = ensureNode(n, S.cur); });
+    Object.keys(S.edges).forEach(function (k) { var e = S.edges[k]; if (list[e.a] && list[e.b]) edges.push(e); });
+    S.near.forEach(function (n) { if (!(S.nodes[n] && S.nodes[n].visited)) edges.push({ a: S.cur, b: n, kind: "ghost" }); });
+    return { list: list, edges: edges };
+  }
+  function dims() { return window.innerWidth < 640 ? { w: 380, h: 520 } : { w: 720, h: 520 }; }
+  function layout(v) {
+    var names = Object.keys(v.list), W = dims().w, H = dims().h;
+    for (var it = 0; it < 240; it++) {
+      for (var i = 0; i < names.length; i++) {
+        var a = v.list[names[i]];
+        for (var j = i + 1; j < names.length; j++) {
+          var b = v.list[names[j]], dx = a.x - b.x, dy = a.y - b.y, d2 = Math.max(dx * dx + dy * dy, 25), f = 7000 / d2, d = Math.sqrt(d2);
+          dx = dx / d * f; dy = dy / d * f; a.vx += dx; a.vy += dy; b.vx -= dx; b.vy -= dy;
+        }
+        a.vx += (W / 2 - a.x) * 0.002; a.vy += (H / 2 - a.y) * 0.002;
+      }
+      v.edges.forEach(function (e) {
+        var a = v.list[e.a], b = v.list[e.b], dx = b.x - a.x, dy = b.y - a.y, d = Math.max(Math.sqrt(dx * dx + dy * dy), 1), L = e.kind === "ghost" ? 130 : 160, f = (d - L) * 0.03;
+        dx = dx / d * f; dy = dy / d * f; a.vx += dx; a.vy += dy; b.vx -= dx; b.vy -= dy;
+      });
+      names.forEach(function (k) {
+        var n = v.list[k]; n.vx *= 0.82; n.vy *= 0.82; n.x += n.vx; n.y += n.vy;
+        n.x = Math.min(W - 70, Math.max(70, n.x)); n.y = Math.min(H - 30, Math.max(30, n.y));
+      });
+    }
+  }
+  function drawGraph() {
+    var v = visible(); layout(v);
+    var svg = $("graph"), NS = "http://www.w3.org/2000/svg"; svg.innerHTML = "";
+    svg.setAttribute("aria-label", t("graphLabel")); svg.setAttribute("viewBox", "0 0 " + dims().w + " " + dims().h);
+    function el(n, attrs, parent) { var e = document.createElementNS(NS, n); Object.keys(attrs).forEach(function (k) { e.setAttribute(k, attrs[k]); }); (parent || svg).appendChild(e); return e; }
+    v.edges.forEach(function (e) {
+      var a = v.list[e.a], b = v.list[e.b];
+      el("line", { "class": "edge " + (e.kind === "path" ? "path" : e.kind === "ghost" ? "ghost" : ""), x1: a.x.toFixed(1), y1: a.y.toFixed(1), x2: b.x.toFixed(1), y2: b.y.toFixed(1) });
+    });
+    Object.keys(v.list).forEach(function (k) {
+      var n = v.list[k], cls = "node";
+      if (k === S.cur) cls += " current"; else if (n.visited) cls += " visited"; else cls += " near";
+      if (isKept(k)) cls += " kept";
+      var g = el("g", { "class": cls, tabindex: "0", role: "button", "aria-label": t("visit") + " " + k, transform: "translate(" + n.x.toFixed(1) + "," + n.y.toFixed(1) + ")" });
+      el("circle", { r: k === S.cur ? 12 : n.visited ? 9 : 7 }, g);
+      var tx = el("text", { x: 14, y: 4 }, g); tx.textContent = truncate(k, 26);
+      if (n.x > dims().w * 0.72) { tx.setAttribute("x", -14); tx.setAttribute("text-anchor", "end"); }
+      g.addEventListener("click", function () { if (k !== S.cur) visit(k); });
+      g.addEventListener("keydown", function (ev) { if ((ev.key === "Enter" || ev.key === " ") && k !== S.cur) { ev.preventDefault(); visit(k); } });
+    });
+  }
+
+  /* ---------- glossary ---------- */
+  function renderGlossary() {
+    var dl = $("glossaryList"); dl.innerHTML = "";
+    $("glossaryEmpty").hidden = glossary.length > 0;
+    $("exportBtn").disabled = $("clearBtn").disabled = glossary.length === 0;
+    glossary.forEach(function (g, i) {
+      var d = document.createElement("div"), dt = document.createElement("dt"), dd = document.createElement("dd");
+      var name = document.createElement("span"); name.textContent = g.title + (g.lang !== S.lang ? " (" + g.lang + ")" : "");
+      var rm = document.createElement("button"); rm.type = "button"; rm.textContent = t("remove"); rm.setAttribute("aria-label", t("remove") + " " + g.title);
+      rm.addEventListener("click", function () { glossary.splice(i, 1); saveGlossary(); if (S.cur) render(); else renderGlossary(); });
+      dt.appendChild(name); dt.appendChild(rm);
+      dd.textContent = g.description ? g.description + ". " + firstSentence(g.extract) : firstSentence(g.extract);
+      d.appendChild(dt); d.appendChild(dd); dl.appendChild(d);
+    });
+  }
+  function firstSentence(x) { var m = (x || "").match(/^.*?[.!?](\s|$)/); return (m ? m[0] : x || "").trim(); }
+  function toggleKeep() {
+    var s = cacheSum[gkey(S.lang, S.cur)]; if (!s) return;
+    var i = -1; glossary.forEach(function (g, n) { if (g.lang === S.lang && g.title === s.title) i = n; });
+    if (i >= 0) glossary.splice(i, 1);
+    else glossary.push({ title: s.title, lang: S.lang, description: s.description, extract: s.extract, url: s.url });
+    saveGlossary(); render();
+  }
+  function exportMd() {
+    var L = [ "# " + t("exportTitle"), "", t("exportBy"), "", t("exportSrc"), "" ];
+    glossary.forEach(function (g) { L.push("## " + g.title, "", g.extract || g.description || "", "", g.url, ""); });
+    var blob = new Blob([L.join("\n")], { type: "text/markdown;charset=utf-8" }), a = document.createElement("a");
+    a.href = URL.createObjectURL(blob); a.download = "glossary.md"; document.body.appendChild(a); a.click();
+    setTimeout(function () { URL.revokeObjectURL(a.href); a.remove(); }, 500);
+  }
+
+  /* ---------- controls ---------- */
+  function applyLang() {
+    document.documentElement.lang = S.lang;
+    document.querySelectorAll("[data-i]").forEach(function (e) { if (e.id !== "keepBtn" || !S.cur) e.textContent = t(e.getAttribute("data-i")); });
+    document.querySelectorAll("[data-ph]").forEach(function (e) { e.placeholder = t(e.getAttribute("data-ph")); });
+    $("modeHint").textContent = S.mode === "connect" ? t("hintConnect") : t("hintWander");
+    document.querySelectorAll(".gg-lang").forEach(function (b) { var on = b.getAttribute("data-lang") === S.lang; b.classList.toggle("active", on); b.setAttribute("aria-pressed", String(on)); });
+    if (S.cur) render(); else renderGlossary();
+  }
+  function setMode(m) {
+    S.mode = m;
+    document.querySelectorAll(".gg-chip").forEach(function (b) { var on = b.getAttribute("data-mode") === m; b.classList.toggle("active", on); b.setAttribute("aria-pressed", String(on)); });
+    $("targetField").hidden = m !== "connect";
+    $("modeHint").textContent = m === "connect" ? t("hintConnect") : t("hintWander");
+  }
+  function start(startTerm, targetTerm) {
+    resetGame();
+    var tgt = S.mode === "connect" ? targetTerm : "";
+    setStatus(t("loading"));
+    var pStart = resolveTerm(startTerm);
+    var pTarget = tgt ? resolveTerm(tgt).then(function (n) { return summary(n); }) : Promise.resolve(null);
+    return Promise.all([pStart, pTarget]).then(function (r) {
+      S.target = r[1] || null;
+      return visit(r[0]);
+    }).catch(function (e) {
+      if (e && e.notfound) setStatus(t("errNotFound", { t: e.notfound }), "err"); else setStatus(t("errNet"), "err");
+    });
+  }
+
+  document.querySelectorAll(".gg-chip").forEach(function (b) { b.addEventListener("click", function () { setMode(b.getAttribute("data-mode")); }); });
+  document.querySelectorAll(".gg-lang").forEach(function (b) { b.addEventListener("click", function () { S.lang = b.getAttribute("data-lang"); resetGame(); setStatus(""); applyLang(); }); });
+  $("startForm").addEventListener("submit", function (ev) {
+    ev.preventDefault();
+    var a = $("startInput").value.trim(), b = $("targetInput").value.trim();
+    if (!a) { setStatus(t("needStart"), "err"); $("startInput").focus(); return; }
+    if (S.mode === "connect" && !b) { setStatus(t("needTarget"), "err"); $("targetInput").focus(); return; }
+    start(a, b);
+  });
+  $("randomBtn").addEventListener("click", function () {
+    resetGame(); setStatus(t("loading"));
+    var jobs = [randomTerm()]; if (S.mode === "connect") jobs.push(randomTerm());
+    Promise.all(jobs).then(function (r) {
+      $("startInput").value = r[0]; if (r[1]) $("targetInput").value = r[1];
+      return start(r[0], r[1] || "");
+    }).catch(function () { setStatus(t("errNet"), "err"); });
+  });
+  $("backBtn").addEventListener("click", function () {
+    if (S.path.length < 2) return;
+    S.path.pop(); var k = S.path[S.path.length - 1]; S.moves = Math.max(0, S.moves - 1); var my = ++S.req;
+    summary(k).then(function () { return leadLinks(k); }).then(function (l) {
+      if (my !== S.req) return;
+      S.cur = k; S.near = l; S.won = false; render();
+    }).catch(function () { setStatus(t("errNet"), "err"); });
+  });
+  $("keepBtn").addEventListener("click", toggleKeep);
+  $("exportBtn").addEventListener("click", exportMd);
+  $("clearBtn").addEventListener("click", function () { if (glossary.length && window.confirm(t("confirmClear"))) { glossary = []; saveGlossary(); if (S.cur) render(); else renderGlossary(); } });
+
+  /* ?lang=fr&start=pulsar opens the game on a term */
+  try {
+    var q = new URLSearchParams(location.search), l = q.get("lang");
+    if (l && UI[l]) S.lang = l;
+    applyLang();
+    var st = q.get("start"), tg = q.get("target");
+    if (st) { $("startInput").value = st; if (tg) { setMode("connect"); $("targetInput").value = tg; } start(st, tg || ""); }
+  } catch (e) { applyLang(); }
+})();

@@ -1,0 +1,151 @@
+<!doctype html>
+<html lang="en">
+<head>
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-5RWL43XS5X"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-5RWL43XS5X');
+</script>
+
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Glossary Game | CosmoVentures</title>
+<meta name="description" content="Glossary Game: start from any term, wander through Wikipedia, keep the words you meet and watch a graph of them grow. A free tool by CosmoVentures.">
+<meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1">
+<meta name="author" content="Sofia Gallego">
+<link rel="canonical" href="https://cosmoventures.fr/tools/glossary/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="CosmoVentures">
+<meta property="og:title" content="Glossary Game | CosmoVentures">
+<meta property="og:description" content="Start from any term, wander through Wikipedia and build your own glossary as a graph.">
+<meta property="og:url" content="https://cosmoventures.fr/tools/glossary/">
+<meta property="og:image" content="https://cosmoventures.fr/assets/images/og-cosmoventures.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Glossary Game | CosmoVentures">
+<meta name="twitter:description" content="Start from any term, wander through Wikipedia and build your own glossary as a graph.">
+<meta name="twitter:image" content="https://cosmoventures.fr/assets/images/og-cosmoventures.jpg">
+
+<link rel="icon" href="/assets/cosmoventures.ico">
+<link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-icon-180x180.png">
+<meta name="theme-color" content="#f3f4f8"><meta name="color-scheme" content="light">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;900&family=Roboto+Mono:wght@300;400;700&display=swap">
+<link rel="stylesheet" href="/assets/css/home.css">
+<link rel="stylesheet" href="/assets/css/cosmoventures.css">
+<link rel="stylesheet" href="/assets/css/tool.css">
+<link rel="stylesheet" href="css/styles.css">
+<script src="/assets/js/display.js"></script>
+</head>
+
+<body class="cv tool-page">
+<a class="skip" href="#app">Skip to content</a>
+<nav class="site" aria-label="Main">
+  <div class="navin">
+    <a class="brand" href="/"><img src="/assets/images/cosmoventures-logo-192.png" alt="" width="28" height="28">CosmoVentures</a>
+    <ul id="menu">
+      <li><a href="/#services">Services</a></li>
+      <li><a href="/#process">Process</a></li>
+      <li><a href="/#work">Work</a></li>
+      <li><a href="/tools/" aria-current="page">Tools</a></li>
+      <li><a href="/#research">Research</a></li>
+      <li><a href="/#contact">Contact</a></li>
+      <li><a href="/#about">About</a></li>
+    </ul>
+    <button class="burger" id="burger" aria-expanded="false" aria-controls="menu">Menu</button>
+  </div>
+</nav>
+
+<header class="tool-intro cv-wrap">
+  <p class="eyebrow"><a href="/tools/">CosmoVentures · Tools</a></p>
+  <h1>Glossary Game</h1>
+  <p class="cv-sub">Start from any term, wander through Wikipedia and keep the words you meet.</p>
+  <p class="tool-why">Every term and definition comes from Wikipedia as you go, so a glossary can begin anywhere. It shows how a knowledge map can be grown live from an open source, one connection at a time.</p>
+</header>
+
+<main class="cv-wrap tool-main">
+  <div id="app" class="tool-app">
+
+    <section class="gg-card gg-controls" aria-label="Start">
+      <div class="gg-top">
+        <div class="gg-modes" role="group" aria-label="Mode">
+          <button type="button" class="gg-chip active" data-mode="wander" aria-pressed="true" data-i="modeWander">Free wander</button>
+          <button type="button" class="gg-chip" data-mode="connect" aria-pressed="false" data-i="modeConnect">Connect two terms</button>
+        </div>
+        <div class="gg-langs" role="group" aria-label="Wikipedia language">
+          <button type="button" class="gg-lang active" data-lang="en" aria-pressed="true">EN</button>
+          <button type="button" class="gg-lang" data-lang="es" aria-pressed="false">ES</button>
+          <button type="button" class="gg-lang" data-lang="fr" aria-pressed="false">FR</button>
+          <button type="button" class="gg-lang" data-lang="de" aria-pressed="false">DE</button>
+        </div>
+      </div>
+      <form id="startForm" class="gg-form" autocomplete="off">
+        <label class="gg-field"><span data-i="startLabel">Start term</span><input id="startInput" type="text" data-ph="phStart" placeholder="For example: pulsar" maxlength="80"></label>
+        <label class="gg-field" id="targetField" hidden><span data-i="targetLabel">Target term</span><input id="targetInput" type="text" data-ph="phTarget" placeholder="For example: music" maxlength="80"></label>
+        <div class="gg-actions">
+          <button type="submit" class="gg-btn primary" id="goBtn" data-i="go">Start</button>
+          <button type="button" class="gg-btn" id="randomBtn" data-i="random">Surprise me</button>
+        </div>
+      </form>
+      <p class="gg-hint" id="modeHint"></p>
+    </section>
+
+    <p class="gg-status" id="status" role="status" aria-live="polite"></p>
+
+    <div class="gg-play" id="play" hidden>
+      <section class="gg-card gg-graphcard" aria-label="Graph">
+        <svg id="graph" viewBox="0 0 720 520" role="img" aria-label="Graph of the terms you have visited"></svg>
+        <p class="gg-legend"><span class="k visited"></span><span data-i="legVisited">Visited</span><span class="k current"></span><span data-i="legCurrent">Current</span><span class="k near"></span><span data-i="legNear">Next steps</span><span class="k kept"></span><span data-i="legKept">Kept</span></p>
+      </section>
+
+      <section class="gg-card gg-term" aria-live="polite">
+        <p class="gg-eyebrow" id="steps"></p>
+        <h2 id="termTitle"></h2>
+        <p class="gg-desc" id="termDesc"></p>
+        <p class="gg-extract" id="termExtract"></p>
+        <div class="gg-actions">
+          <button type="button" class="gg-btn" id="backBtn" data-i="back">← Back</button>
+          <button type="button" class="gg-btn" id="keepBtn" aria-pressed="false" data-i="keep">☆ Keep in glossary</button>
+          <a class="gg-btn" id="wikiLink" target="_blank" rel="noopener" data-i="article">Article</a>
+        </div>
+        <h3 class="gg-sub" data-i="nextSteps">Where to next</h3>
+        <ul class="gg-near" id="near"></ul>
+      </section>
+    </div>
+
+    <section class="gg-card gg-glossary" id="glossaryCard" aria-label="Glossary">
+      <div class="gg-top">
+        <h2 class="gg-h2" data-i="glossaryTitle">Your glossary</h2>
+        <div class="gg-actions">
+          <button type="button" class="gg-btn small" id="exportBtn" data-i="export">Download as Markdown</button>
+          <button type="button" class="gg-btn small" id="clearBtn" data-i="clear">Clear</button>
+        </div>
+      </div>
+      <p class="gg-hint" id="glossaryEmpty" data-i="glossaryEmpty">Terms you keep will appear here, with their definitions.</p>
+      <dl class="gg-list" id="glossaryList"></dl>
+    </section>
+
+  </div>
+</main>
+
+<section class="cv-wrap tool-cta">
+  <h2>Looking for something like this?</h2>
+  <p>CosmoVentures designs and builds interactive pieces for organisations, from a first prototype to a finished guide.</p>
+  <a class="btn primary" href="/#contact">Discuss a project</a>
+</section>
+
+<footer><span>Cosmoventures SASU · Paris, France · <a class="support" href="https://ko-fi.com/cosmosofia" rel="noopener">Support my work</a></span><a class="flogo" href="/" aria-label="CosmoVentures"><img src="/assets/images/cosmoventures-logo-192.png" alt="CosmoVentures" width="64" height="64"></a><span><a class="support" href="https://sofiagallego.com/">Personal website: sofiagallego.com</a> · © Nefinia</span></footer>
+<script>
+  document.getElementById('burger').addEventListener('click', function(){
+    var m=document.getElementById('menu'), o=m.classList.toggle('open'); this.setAttribute('aria-expanded', String(o));
+  });
+</script>
+<script src="js/app.js"></script>
+</body>
+</html>
