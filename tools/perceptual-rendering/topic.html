@@ -1,119 +1,153 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-
 <!-- Global site tag (gtag.js) - Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-5RWL43XS5X"></script>
 <script>
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
-
   gtag('config', 'G-5RWL43XS5X');
 </script>
-
-  <meta charset="utf-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <title>Perceptual Rendering — Topic</title>
-  <link rel="stylesheet" href="./assets/styles.css"/>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Topic reader | Perceptual Rendering | CosmoVentures</title>
+<meta name="description" content="Read one topic in five rendering modes: skim, step, deep, visual or Socratic. The facts stay the same; only the structure changes.">
+<meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1">
+<meta name="author" content="Sofia Gallego">
+<link rel="canonical" href="https://cosmoventures.fr/tools/perceptual-rendering/topic.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="CosmoVentures">
+<meta property="og:locale" content="en_GB">
+<meta property="og:title" content="Topic reader | Perceptual Rendering | CosmoVentures">
+<meta property="og:description" content="Read one topic in five rendering modes: skim, step, deep, visual or Socratic. The facts stay the same; only the structure changes.">
+<meta property="og:url" content="https://cosmoventures.fr/tools/perceptual-rendering/topic.html">
+<meta property="og:image" content="https://cosmoventures.fr/assets/images/og-cosmoventures.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Topic reader | Perceptual Rendering | CosmoVentures">
+<meta name="twitter:description" content="Read one topic in five rendering modes: skim, step, deep, visual or Socratic. The facts stay the same; only the structure changes.">
+<meta name="twitter:image" content="https://cosmoventures.fr/assets/images/og-cosmoventures.jpg">
+<link rel="icon" href="/assets/cosmoventures.ico">
+<link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-icon-180x180.png">
+<meta name="theme-color" content="#f3f4f8"><meta name="color-scheme" content="light">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;900&family=Roboto+Mono:wght@300;400;700&display=swap">
+<link rel="stylesheet" href="/assets/css/home.css">
+<link rel="stylesheet" href="/assets/css/cosmoventures.css">
+<link rel="stylesheet" href="/assets/css/tool.css">
+<link rel="stylesheet" href="/tools/perceptual-rendering/assets/styles.css">
+<script src="/assets/js/display.js"></script>
 </head>
-<body class="theme-light">
-<a href="/tools/" style="display:block;padding:8px 16px;font:13px/1.4 system-ui,sans-serif;color:#454a63;background:#f3f4f8;text-decoration:none;border-bottom:1px solid rgba(19,21,43,.13)">← CosmoVentures · Tools</a>
-  <div class="app">
+<body class="cv tool-page">
+<a class="skip" href="#app">Skip to content</a>
+<nav class="site" aria-label="Main">
+  <div class="navin">
+    <a class="brand" href="/"><img src="/assets/images/cosmoventures-logo-192.png" alt="" width="28" height="28">CosmoVentures</a>
+    <ul id="menu">
+      <li><a href="/#services">Services</a></li>
+      <li><a href="/#process">Process</a></li>
+      <li><a href="/#work">Work</a></li>
+      <li><a href="/tools/" aria-current="page">Tools</a></li>
+      <li><a href="/#research">Research</a></li>
+      <li><a href="/#contact">Contact</a></li>
+      <li><a href="/#about">About</a></li>
+    </ul>
+    <button class="burger" id="burger" aria-expanded="false" aria-controls="menu">Menu</button>
+  </div>
+</nav>
 
-    <!-- LEFT PANEL (controls) -->
-    <aside class="left" aria-label="Display controls">
-      <button class="collapse-arrow" id="leftArrow" type="button" aria-label="Toggle controls"></button>
+<header class="tool-intro cv-wrap">
+  <p class="eyebrow"><a href="/tools/">CosmoVentures · Tools</a></p>
+  <h1>Topic reader</h1>
+  <p class="cv-sub">One topic, five ways to read it.</p>
+  <p class="tool-why">Each topic is a set of facts with one encoding per mode. Every mode covers all the facts; only the structure and phrasing change.</p>
+</header>
 
-      <div class="left-inner">
-        <a class="backlink" href="./index.html">← Overview</a>
-
-        <div class="left-title">Display controls</div>
-
-        <div class="group">
-          <div class="group-title">Theme</div>
-          <div class="row">
-            <label class="lbl" for="themeSel">Mode</label>
-            <select id="themeSel">
-              <option value="system">System</option>
-              <option value="light">Light</option>
-              <option value="dark">Dark</option>
-            </select>
-          </div>
-          <label class="tog"><input id="contrastTog" type="checkbox"/> High contrast</label>
-          <label class="tog"><input id="motionTog" type="checkbox"/> Reduce motion</label>
-        </div>
-
-        <div class="group">
-          <div class="group-title">Font</div>
-          <div class="row">
-            <label class="lbl" for="fontSel">Family</label>
+<main class="cv-wrap tool-main">
+  <div id="app" class="tool-app">
+    <nav aria-label="Perceptual Rendering pages"><ul class="pr-tabs"><li><a href="/tools/perceptual-rendering/">Overview</a></li><li><a href="/tools/perceptual-rendering/perceptual-rendering.html">Pig feeding experiment</a></li><li><a href="/tools/perceptual-rendering/topic.html?t=blackhole" aria-current="page">Topic reader</a></li></ul></nav>
+    <div class="pr-layout">
+    <aside class="pr-left" aria-label="Display controls">
+      <div class="pr-left-head">
+        <h2 class="pr-left-title">Display controls</h2>
+        <button id="leftToggleBtn" class="pr-btn" type="button" aria-expanded="true" aria-controls="leftBody">Collapse</button>
+      </div>
+      <div class="pr-left-body" id="leftBody">
+        <div class="pr-group">
+          <h3 class="pr-group-title">Font</h3>
+          <div class="pr-row">
+            <label class="pr-lbl" for="fontSel">Family</label>
             <select id="fontSel">
-              <option value="system">System</option>
+              <option value="system">Default</option>
               <option value="serif">Serif</option>
               <option value="mono">Mono</option>
-              <option value="dys">Dyslexia-friendly*</option>
+              <option value="dys">Dyslexia-friendly (OpenDyslexic)</option>
             </select>
           </div>
-          <div class="tiny muted">*Uses OpenDyslexic if available on device.</div>
         </div>
 
-        <div class="group">
-          <div class="group-title">Readability</div>
-
-          <div class="slider">
-            <div class="srow"><span class="lbl">Size</span><span id="fsVal" class="val">16</span></div>
+        <div class="pr-group">
+          <h3 class="pr-group-title">Readability</h3>
+          <div class="pr-slider">
+            <div class="pr-srow"><label class="pr-lbl" for="fs">Size</label><span id="fsVal" class="pr-val">16</span></div>
             <input id="fs" type="range" min="14" max="22" step="1" value="16"/>
           </div>
-
-          <div class="slider">
-            <div class="srow"><span class="lbl">Line height</span><span id="lhVal" class="val">1.60</span></div>
+          <div class="pr-slider">
+            <div class="pr-srow"><label class="pr-lbl" for="lh">Line height</label><span id="lhVal" class="pr-val">1.60</span></div>
             <input id="lh" type="range" min="1.3" max="2.1" step="0.05" value="1.6"/>
           </div>
-
-          <div class="slider">
-            <div class="srow"><span class="lbl">Letter spacing</span><span id="lsVal" class="val">0.00</span></div>
+          <div class="pr-slider">
+            <div class="pr-srow"><label class="pr-lbl" for="ls">Letter spacing</label><span id="lsVal" class="pr-val">0.00</span></div>
             <input id="ls" type="range" min="0" max="1.2" step="0.05" value="0"/>
           </div>
-
-          <div class="slider">
-            <div class="srow"><span class="lbl">Paragraph gap</span><span id="pgVal" class="val">12</span></div>
+          <div class="pr-slider">
+            <div class="pr-srow"><label class="pr-lbl" for="pg">Paragraph gap</label><span id="pgVal" class="pr-val">12</span></div>
             <input id="pg" type="range" min="6" max="26" step="1" value="12"/>
           </div>
-
-          <div class="slider">
-            <div class="srow"><span class="lbl">Line width</span><span id="mwVal" class="val">74ch</span></div>
+          <div class="pr-slider">
+            <div class="pr-srow"><label class="pr-lbl" for="mw">Line width</label><span id="mwVal" class="pr-val">74ch</span></div>
             <input id="mw" type="range" min="55" max="105" step="1" value="74"/>
           </div>
         </div>
 
-        <button class="btn" id="resetBtn" type="button">Reset controls</button>
-      </div>
+        <div class="pr-group">
+          <h3 class="pr-group-title">Comfort</h3>
+          <label class="pr-tog"><input id="contrastTog" type="checkbox"/> High contrast</label>
+          <label class="pr-tog"><input id="motionTog" type="checkbox"/> Reduce motion</label>
+        </div>
 
-      <div class="left-peek">
-        <button class="peek-btn" id="leftPeekBtn" type="button" aria-label="Show controls">›</button>
+        <div class="pr-group">
+          <button class="pr-btn wide" id="resetBtn" type="button">Reset controls</button>
+          <p class="pr-tiny pr-note">These controls change the sample text, which is the variable under study. The Aa menu in the top bar sets font, size and spacing for the whole page, and takes priority when both are used.</p>
+        </div>
       </div>
     </aside>
 
-    <!-- MAIN -->
-    <main>
-      <header class="topic-hero">
-        <div class="topic-topline">
-          <div class="kicker">Perceptual Rendering</div>
-          <div class="topic-switch">
-            <label class="lbl" for="topicSel">Topic</label>
-            <select id="topicSel"></select>
-          </div>
+    <div class="pr-stage">
+      <header class="pr-topic">
+        <div class="pr-topic-top">
+          <label for="topicSel">Topic</label>
+          <select id="topicSel"></select>
         </div>
-        <h1 class="topic-title" id="topicTitle">—</h1>
-        <p class="topic-sub" id="topicSubtitle">—</p>
+        <h2 id="topicTitle">—</h2>
+        <p id="topicSubtitle">—</p>
       </header>
+
+      <div class="pr-modes" role="group" aria-label="Rendering modes">
+        <span class="pr-modes-label">Mode</span>
+        <button class="mode-btn" type="button" data-skin="skimmer">Skimmer</button>
+        <button class="mode-btn" type="button" data-skin="stepper">Stepper</button>
+        <button class="mode-btn" type="button" data-skin="deep">Deep Reader</button>
+        <button class="mode-btn" type="button" data-skin="visual">Visual Chunker</button>
+        <button class="mode-btn" type="button" data-skin="socratic">Socratic</button>
+        <span class="chip" id="activeChip" aria-live="polite">Active: —</span>
+      </div>
 
       <section class="viewer">
         <div class="content">
           <div id="summary" class="summary"><b>TL;DR</b> —</div>
-
-          <!-- MODE VIEWS (app.js will show one at a time) -->
           <div id="skim"></div>
           <div id="deep"></div>
           <div id="cards" class="cards" aria-hidden="true"></div>
@@ -121,20 +155,24 @@
           <div id="qa" class="qa" aria-hidden="true"></div>
         </div>
       </section>
-    </main>
+    </div>
+    </div>
   </div>
+</main>
 
-  <!-- BOTTOM BAR (modes only) -->
-  <div class="bottom" role="region" aria-label="Rendering modes">
-    <button class="mode-btn" data-skin="skimmer">Skimmer</button>
-    <button class="mode-btn" data-skin="stepper">Stepper</button>
-    <button class="mode-btn" data-skin="deep">Deep Reader</button>
-    <button class="mode-btn" data-skin="visual">Visual Chunker</button>
-    <button class="mode-btn" data-skin="socratic">Socratic</button>
-    <div class="chip" id="activeChip">Active: —</div>
-  </div>
+<section class="cv-wrap tool-cta">
+  <h2>Looking for something like this?</h2>
+  <p>CosmoVentures designs and builds interactive pieces for organisations, from a first prototype to a finished guide.</p>
+  <a class="btn primary" href="/#contact">Discuss a project</a>
+</section>
 
-  <script src="./assets/topics.js"></script>
-  <script src="./assets/app.js"></script>
+<footer><span>Cosmoventures SASU · Paris, France · <a class="support" href="https://ko-fi.com/cosmosofia" rel="noopener">Support my work</a></span><a class="flogo" href="/" aria-label="CosmoVentures"><img src="/assets/images/cosmoventures-logo-192.png" alt="CosmoVentures" width="64" height="64"></a><span><a class="support" href="https://sofiagallego.com/">Personal website: sofiagallego.com</a> · © Nefinia</span></footer>
+<script>
+  document.getElementById('burger').addEventListener('click', function(){
+    var m=document.getElementById('menu'), o=m.classList.toggle('open'); this.setAttribute('aria-expanded', String(o));
+  });
+</script>
+<script src="/tools/perceptual-rendering/assets/topics.js"></script>
+<script src="/tools/perceptual-rendering/assets/app.js"></script>
 </body>
 </html>

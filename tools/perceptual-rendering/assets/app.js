@@ -43,16 +43,6 @@
     return getComputedStyle(document.documentElement).getPropertyValue(name).trim();
   }
 
-  function setTheme(mode){
-    document.body.classList.remove("theme-light","theme-dark");
-    if(mode === "light") document.body.classList.add("theme-light");
-    if(mode === "dark") document.body.classList.add("theme-dark");
-    if(mode === "system"){
-      const prefersDark = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
-      document.body.classList.add(prefersDark ? "theme-dark" : "theme-light");
-    }
-  }
-
   function setFont(which){
     let val = "var(--font-system)";
     if(which === "serif") val = "var(--font-serif)";
@@ -63,6 +53,11 @@
 
   function setLeftCollapsed(collapsed){
     document.body.classList.toggle("left-collapsed", collapsed);
+    const btn = $("leftToggleBtn");
+    if(btn){
+      btn.textContent = collapsed ? "Expand" : "Collapse";
+      btn.setAttribute("aria-expanded", String(!collapsed));
+    }
     savePrefs();
   }
 
@@ -98,7 +93,7 @@
     const el = $("skim");
     const facts = ensureFacts(topic);
     if(!facts.length){
-      el.innerHTML = `<p class="muted">No facts found for this topic.</p>`;
+      el.innerHTML = `<p class="pr-muted">No facts found for this topic.</p>`;
       return;
     }
     const items = facts.map(f => `<li>${escapeHtml(f.render?.skimmer || "")}</li>`).join("");
@@ -112,7 +107,7 @@
     const el = $("deep");
     const facts = ensureFacts(topic);
     if(!facts.length){
-      el.innerHTML = `<p class="muted">No facts found for this topic.</p>`;
+      el.innerHTML = `<p class="pr-muted">No facts found for this topic.</p>`;
       return;
     }
     const paras = facts.map(f => `<p>${escapeHtml(f.render?.deep || "")}</p>`).join("");
@@ -130,7 +125,7 @@
       const title = f.render?.visualTitle || "";
       const body  = f.render?.visualBody || "";
       const card = document.createElement("div");
-      card.className = "cardx";
+      card.className = "pr-card";
       card.innerHTML = `<h3>${escapeHtml(title)}</h3><p>${escapeHtml(body)}</p>`;
       el.appendChild(card);
     });
@@ -143,8 +138,8 @@
     facts.forEach((f, i) => {
       const text = f.render?.stepper || "";
       const div = document.createElement("div");
-      div.className = "step";
-      div.innerHTML = `<b>Step ${i+1}</b><div style="margin-top:6px;">${escapeHtml(text)}</div>`;
+      div.className = "pr-step";
+      div.innerHTML = `<span class="pr-step-no">Step ${i+1}</span><div>${escapeHtml(text)}</div>`;
       el.appendChild(div);
     });
   }
@@ -210,6 +205,7 @@
     if(!topic) return;
 
     $("topicTitle").textContent = topic.title || "—";
+    document.title = `${topic.title || "Topic reader"} | Perceptual Rendering | CosmoVentures`;
     $("topicSubtitle").textContent = topic.subtitle || "—";
 
     renderSummary(topic);
@@ -255,7 +251,6 @@
     const prefs = {
       skin: currentSkin,
       topic: currentTopicId,
-      theme: $("themeSel")?.value ?? "system",
       contrast: $("contrastTog")?.checked ?? false,
       motion: $("motionTog")?.checked ?? false,
       fontSel: $("fontSel")?.value ?? "system",
@@ -266,7 +261,7 @@
       mw: $("mw")?.value ?? "74",
       leftCollapsed: document.body.classList.contains("left-collapsed"),
     };
-    localStorage.setItem(STORE_KEY, JSON.stringify(prefs));
+    try{ localStorage.setItem(STORE_KEY, JSON.stringify(prefs)); }catch{}
   }
 
   function loadPrefs(){
@@ -278,9 +273,6 @@
   }
 
   function resetControls(){
-    $("themeSel").value = "system";
-    setTheme("system");
-
     $("contrastTog").checked = false;
     document.body.classList.remove("contrast");
 
@@ -329,17 +321,15 @@
 
     initTopicSelector();
 
-    // wire panel arrow + peek button
-    $("leftArrow").addEventListener("click", () => setLeftCollapsed(!document.body.classList.contains("left-collapsed")));
-    $("leftPeekBtn").addEventListener("click", () => setLeftCollapsed(false));
+    // wire panel toggle
+    $("leftToggleBtn").addEventListener("click", () => setLeftCollapsed(!document.body.classList.contains("left-collapsed")));
 
     // wire mode buttons
     document.querySelectorAll(".mode-btn").forEach(btn => {
       btn.addEventListener("click", () => applySkin(btn.dataset.skin));
     });
 
-    // wire theme & toggles
-    $("themeSel").addEventListener("change", (e)=>{ setTheme(e.target.value); savePrefs(); });
+    // wire toggles
     $("contrastTog").addEventListener("change", (e)=>{ document.body.classList.toggle("contrast", e.target.checked); savePrefs(); });
     $("motionTog").addEventListener("change", (e)=>{ document.body.classList.toggle("reduce-motion", e.target.checked); savePrefs(); });
 
@@ -371,10 +361,6 @@
     currentTopicId = urlTopic || prefs?.topic || "blackhole";
     $("topicSel").value = currentTopicId;
 
-    // theme
-    $("themeSel").value = prefs?.theme || "system";
-    setTheme($("themeSel").value);
-
     // toggles
     $("contrastTog").checked = !!prefs?.contrast;
     document.body.classList.toggle("contrast", !!prefs?.contrast);
@@ -398,20 +384,15 @@
     }
 
     // left collapsed
-    document.body.classList.toggle("left-collapsed", !!prefs?.leftCollapsed);
+    // on narrow screens start with the controls folded away
+    const narrow = window.matchMedia && window.matchMedia("(max-width:900px)").matches;
+    setLeftCollapsed(prefs ? !!prefs.leftCollapsed : narrow);
 
     // initial render
     renderForCurrentTopic();
 
     // sync sliders
     syncSlidersFromCSS();
-
-    // keep system theme in sync
-    if(window.matchMedia){
-      window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", ()=>{
-        if($("themeSel").value === "system") setTheme("system");
-      });
-    }
   }
 
   init();

@@ -1,85 +1,119 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-
 <!-- Global site tag (gtag.js) - Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-5RWL43XS5X"></script>
 <script>
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
-
   gtag('config', 'G-5RWL43XS5X');
 </script>
-
-  <meta charset="utf-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <title>Perceptual Rendering — Proof of Concept</title>
-  <link rel="stylesheet" href="assets/styles.css"/>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Perceptual Rendering | CosmoVentures</title>
+<meta name="description" content="Adaptive reading shown through small interactive experiments: the same text rendered in different ways for different readers, with a modest, testable claim.">
+<meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1">
+<meta name="author" content="Sofia Gallego">
+<link rel="canonical" href="https://cosmoventures.fr/tools/perceptual-rendering/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="CosmoVentures">
+<meta property="og:locale" content="en_GB">
+<meta property="og:title" content="Perceptual Rendering | CosmoVentures">
+<meta property="og:description" content="Adaptive reading shown through small interactive experiments: the same text rendered in different ways for different readers, with a modest, testable claim.">
+<meta property="og:url" content="https://cosmoventures.fr/tools/perceptual-rendering/">
+<meta property="og:image" content="https://cosmoventures.fr/assets/images/og-cosmoventures.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Perceptual Rendering | CosmoVentures">
+<meta name="twitter:description" content="Adaptive reading shown through small interactive experiments: the same text rendered in different ways for different readers, with a modest, testable claim.">
+<meta name="twitter:image" content="https://cosmoventures.fr/assets/images/og-cosmoventures.jpg">
+<link rel="icon" href="/assets/cosmoventures.ico">
+<link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-icon-180x180.png">
+<meta name="theme-color" content="#f3f4f8"><meta name="color-scheme" content="light">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;900&family=Roboto+Mono:wght@300;400;700&display=swap">
+<link rel="stylesheet" href="/assets/css/home.css">
+<link rel="stylesheet" href="/assets/css/cosmoventures.css">
+<link rel="stylesheet" href="/assets/css/tool.css">
+<link rel="stylesheet" href="/tools/perceptual-rendering/assets/styles.css">
+<script src="/assets/js/display.js"></script>
 </head>
-<body class="theme-light">
-<a href="/tools/" style="display:block;padding:8px 16px;font:13px/1.4 system-ui,sans-serif;color:#454a63;background:#f3f4f8;text-decoration:none;border-bottom:1px solid rgba(19,21,43,.13)">← CosmoVentures · Tools</a>
-  <div class="page">
-    <header class="hero">
-      <div class="kicker">Perceptual Rendering</div>
-      <h1 class="hero-title">A perception-first reading layer (PoC)</h1>
-      <p class="hero-sub">
-        Same information. Different renderings. The claim is modest and testable:
-        <b>people often struggle less with the content than with the presentation.</b>
-        This prototype lets readers switch how text is structured (bottom bar) and tune readability (left panel) —
-        without changing the underlying content.
-      </p>
-    </header>
-
-    <section class="card">
-      <h2 class="h2">What this is</h2>
-      <ul class="bullets">
-        <li>A minimal demo of a <b>rendering layer</b>: structure and formatting adapt to the reader.</li>
-        <li>No AI. No “personality typing.” No claims about fixed “learning styles.”</li>
-        <li>Goal: see whether certain renderings reduce friction and improve comprehension/recall.</li>
-      </ul>
-
-      <h2 class="h2">How to use it</h2>
-      <ol class="stepslist">
-        <li>Pick a topic below.</li>
-        <li>Switch rendering modes in the bottom bar (Skimmer / Stepper / Deep / Visual / Socratic).</li>
-        <li>Adjust comfort controls in the left panel (font, size, spacing, width, theme).</li>
-        <li>Notice which mode makes things “click” faster, with less fatigue.</li>
-      </ol>
-    </section>
-
-    <section class="topics">
-      <a class="topic" href="topic.html?t=blackhole">
-        <div class="topic-emoji">🌌</div>
-        <div>
-          <div class="topic-title">What is a black hole — really?</div>
-          <div class="topic-desc">Dense concept, high misconception load. Great stress test for structure.</div>
-        </div>
-        <div class="topic-arrow">→</div>
-      </a>
-
-      <a class="topic" href="topic.html?t=entropy">
-        <div class="topic-emoji">🧠</div>
-        <div>
-          <div class="topic-title">What is entropy (without equations)?</div>
-          <div class="topic-desc">Abstract idea with slippery intuition. Rendering should matter a lot here.</div>
-        </div>
-        <div class="topic-arrow">→</div>
-      </a>
-
-      <a class="topic" href="topic.html?t=cheeseboard">
-        <div class="topic-emoji">🧀</div>
-        <div>
-          <div class="topic-title">How to design a great cheese board</div>
-          <div class="topic-desc">Low-stakes procedural problem. Tests whether the layer generalizes beyond STEM.</div>
-        </div>
-        <div class="topic-arrow">→</div>
-      </a>
-    </section>
-
-    <footer class="foot">
-      <span class="muted">PoC: rendering logic is shared across topics; only the content payload changes.</span>
-    </footer>
+<body class="cv tool-page">
+<a class="skip" href="#app">Skip to content</a>
+<nav class="site" aria-label="Main">
+  <div class="navin">
+    <a class="brand" href="/"><img src="/assets/images/cosmoventures-logo-192.png" alt="" width="28" height="28">CosmoVentures</a>
+    <ul id="menu">
+      <li><a href="/#services">Services</a></li>
+      <li><a href="/#process">Process</a></li>
+      <li><a href="/#work">Work</a></li>
+      <li><a href="/tools/" aria-current="page">Tools</a></li>
+      <li><a href="/#research">Research</a></li>
+      <li><a href="/#contact">Contact</a></li>
+      <li><a href="/#about">About</a></li>
+    </ul>
+    <button class="burger" id="burger" aria-expanded="false" aria-controls="menu">Menu</button>
   </div>
+</nav>
+
+<header class="tool-intro cv-wrap">
+  <p class="eyebrow"><a href="/tools/">CosmoVentures · Tools</a></p>
+  <h1>Perceptual Rendering</h1>
+  <p class="cv-sub">Adaptive reading, shown through small interactive experiments.</p>
+  <p class="tool-why">A proof of concept for adaptive reading: the same text rendered in different ways for different readers. It shows how learning products can be tested with small, measurable experiments.</p>
+</header>
+
+<main class="cv-wrap tool-main">
+  <div id="app" class="tool-app">
+    <nav aria-label="Perceptual Rendering pages"><ul class="pr-tabs"><li><a href="/tools/perceptual-rendering/" aria-current="page">Overview</a></li><li><a href="/tools/perceptual-rendering/perceptual-rendering.html">Pig feeding experiment</a></li><li><a href="/tools/perceptual-rendering/topic.html?t=blackhole">Topic reader</a></li></ul></nav>
+    <div class="pr-panels">
+      <section class="pr-panel pr-lead">
+        <h2>Same information, different renderings</h2>
+        <p>The claim is modest and testable: people often struggle less with the content than with the presentation. The prototype lets a reader switch how text is structured (the mode bar) and tune readability (the display controls), while the underlying content stays the same.</p>
+      </section>
+      <section class="pr-panel">
+        <h2>What this is</h2>
+        <ul>
+          <li>A minimal demo of a rendering layer: structure and formatting adapt to the reader.</li>
+          <li>No AI, no personality typing, no claims about fixed learning styles.</li>
+          <li>The aim is to see whether certain renderings reduce friction and improve comprehension and recall.</li>
+        </ul>
+      </section>
+      <section class="pr-panel">
+        <h2>How to use it</h2>
+        <ol>
+          <li>Pick a topic below.</li>
+          <li>Switch rendering modes in the mode bar: Skimmer, Stepper, Deep Reader, Visual Chunker or Socratic.</li>
+          <li>Adjust the comfort controls in the left panel: font, size, spacing and line width.</li>
+          <li>Notice which mode makes things click faster, with less fatigue.</li>
+        </ol>
+      </section>
+    </div>
+
+    <p class="pr-h3">Choose a topic</p>
+    <div class="tool-grid">
+      <article class="tool"><p class="tag">Topic · dense concept</p><h3>What is a black hole, really?</h3><p>Dense concept, high misconception load. A good stress test for structure.</p><a class="more" href="/tools/perceptual-rendering/topic.html?t=blackhole">Open →</a></article>
+      <article class="tool"><p class="tag">Topic · abstract idea</p><h3>What is entropy (without equations)?</h3><p>Abstract idea with slippery intuition. Rendering should matter a lot here.</p><a class="more" href="/tools/perceptual-rendering/topic.html?t=entropy">Open →</a></article>
+      <article class="tool"><p class="tag">Topic · everyday procedure</p><h3>How to design a great cheese board</h3><p>Low-stakes procedural problem. Tests whether the layer generalizes beyond STEM.</p><a class="more" href="/tools/perceptual-rendering/topic.html?t=cheeseboard">Open →</a></article>
+      <article class="tool"><p class="tag">Experiment · one-page reference</p><h3>Basic pig feeding</h3><p>One sample text on a single page, shown in all five modes with the same controls.</p><a class="more" href="/tools/perceptual-rendering/perceptual-rendering.html">Open →</a></article>
+    </div>
+    <p class="pr-tiny pr-foot">Rendering logic is shared across topics; only the content payload changes.</p>
+  </div>
+</main>
+
+<section class="cv-wrap tool-cta">
+  <h2>Looking for something like this?</h2>
+  <p>CosmoVentures designs and builds interactive pieces for organisations, from a first prototype to a finished guide.</p>
+  <a class="btn primary" href="/#contact">Discuss a project</a>
+</section>
+
+<footer><span>Cosmoventures SASU · Paris, France · <a class="support" href="https://ko-fi.com/cosmosofia" rel="noopener">Support my work</a></span><a class="flogo" href="/" aria-label="CosmoVentures"><img src="/assets/images/cosmoventures-logo-192.png" alt="CosmoVentures" width="64" height="64"></a><span><a class="support" href="https://sofiagallego.com/">Personal website: sofiagallego.com</a> · © Nefinia</span></footer>
+<script>
+  document.getElementById('burger').addEventListener('click', function(){
+    var m=document.getElementById('menu'), o=m.classList.toggle('open'); this.setAttribute('aria-expanded', String(o));
+  });
+</script>
 </body>
 </html>
