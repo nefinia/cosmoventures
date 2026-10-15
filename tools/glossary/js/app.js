@@ -352,6 +352,21 @@
       });
     }
   }
+  function unvisit(k) {
+    var n = S.nodes[k];
+    if (!n || k === S.path[0] || (S.solCount && S.solCount[k]) || (S.target && k === S.target.title)) return;
+    var my = ++S.req;
+    n.visited = false;
+    Object.keys(S.edges).forEach(function (e) { var x = S.edges[e]; if (x.a === k || x.b === k) delete S.edges[e]; });
+    delete S.ctx[k];
+    S.path = S.path.filter(function (p) { return p !== k; });
+    S.moves = Math.max(0, S.moves - 1);
+    var prev = S.path[S.path.length - 1];
+    leadLinks(prev).catch(function () { return []; }).then(function (l) {
+      if (my !== S.req) return;
+      S.cur = prev; S.near = l; S.won = false; render();
+    });
+  }
   function drawGraph() {
     var v = visible(); layout(v);
     var svg = $("graph"), NS = "http://www.w3.org/2000/svg", W = dims().w, H = dims().h; svg.innerHTML = "";
@@ -385,8 +400,8 @@
       var vert = W < 500;
       if (n.x > W * 0.68 && !(vert && (isT || isS))) { tx.setAttribute("x", -(r + 6)); tx.setAttribute("text-anchor", "end"); }
       if (vert && (isT || isS)) { tx.setAttribute("x", 0); tx.setAttribute("text-anchor", "middle"); tx.setAttribute("y", isT ? -(r + 12) : r + 20); }
-      g.addEventListener("click", function () { if (k !== S.cur) visit(k); });
-      g.addEventListener("keydown", function (ev) { if ((ev.key === "Enter" || ev.key === " ") && k !== S.cur) { ev.preventDefault(); visit(k); } });
+      g.addEventListener("click", function () { if (k === S.cur) unvisit(k); else visit(k); });
+      g.addEventListener("keydown", function (ev) { if (ev.key === "Enter" || ev.key === " ") { ev.preventDefault(); if (k === S.cur) unvisit(k); else visit(k); } });
     });
   }
 
