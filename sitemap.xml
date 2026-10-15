@@ -64,4 +64,28 @@
     <loc>https://cosmoventures.fr/tools/perceptual-rendering/</loc>
     <lastmod>2026-10-15</lastmod>
   </url>
+  <url>
+    <loc>https://cosmoventures.fr/tools/glossary/</loc>
+    <lastmod>2026-10-15</lastmod>
+    <xhtml:link rel="alternate" hreflang="en" href="https://cosmoventures.fr/tools/glossary/"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://cosmoventures.fr/fr/tools/glossary/"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://cosmoventures.fr/es/tools/glossary/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://cosmoventures.fr/tools/glossary/"/>
+  </url>
+  <url>
+    <loc>https://cosmoventures.fr/fr/tools/glossary/</loc>
+    <lastmod>2026-10-15</lastmod>
+    <xhtml:link rel="alternate" hreflang="en" href="https://cosmoventures.fr/tools/glossary/"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://cosmoventures.fr/fr/tools/glossary/"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://cosmoventures.fr/es/tools/glossary/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://cosmoventures.fr/tools/glossary/"/>
+  </url>
+  <url>
+    <loc>https://cosmoventures.fr/es/tools/glossary/</loc>
+    <lastmod>2026-10-15</lastmod>
+    <xhtml:link rel="alternate" hreflang="en" href="https://cosmoventures.fr/tools/glossary/"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://cosmoventures.fr/fr/tools/glossary/"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://cosmoventures.fr/es/tools/glossary/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://cosmoventures.fr/tools/glossary/"/>
+  </url>
 </urlset>

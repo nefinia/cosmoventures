@@ -34,6 +34,7 @@ Contact: contact form at https://cosmoventures.fr/#contact or email contact@cosm
 ## Tools
 
 - [Free tools to try](https://cosmoventures.fr/tools/): interactive guides, prototypes and games from CosmoVentures (also in [French](https://cosmoventures.fr/fr/tools/) and [Spanish](https://cosmoventures.fr/es/tools/))
+- [Glossary Game](https://cosmoventures.fr/tools/glossary/): free game to learn 60 words from consciousness, cosmology, quantum physics and entropy, as bubbles or flip cards (also in [French](https://cosmoventures.fr/fr/tools/glossary/) and [Spanish](https://cosmoventures.fr/es/tools/glossary/))
 
 ## Research
 
