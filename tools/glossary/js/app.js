@@ -98,20 +98,49 @@
     });
   }
   var NOISE = /^(\d{1,4}( \(.*\))?|(January|February|March|April|May|June|July|August|September|October|November|December|enero|febrero|marzo|abril|mayo|junio|julio|agosto|septiembre|octubre|noviembre|diciembre|janvier|février|mars|avril|mai|juin|juillet|août|septembre|octobre|novembre|décembre|Januar|Februar|März|Juni|Juli|Dezember) \d{1,2}|\d{1,2} (de )?[a-zéûäü]+( de \d{4})?)$/i;
+  function addOut(out, seen, n, title) {
+    if (!n || seen[n] || n === title || NOISE.test(n)) return;
+    seen[n] = 1; out.push(n);
+  }
+  function htmlLinks(html, title) {
+    var doc = new DOMParser().parseFromString(html, "text/html"), out = [], seen = {};
+    doc.querySelectorAll(".infobox, .navbox, .hatnote, .shortdescription, .mw-ref, sup, style, table.sidebar, .metadata").forEach(function (e) { e.remove(); });
+    doc.querySelectorAll("a[href]").forEach(function (a) {
+      if (a.classList.contains("new")) return;
+      var h = a.getAttribute("href") || "", m = h.match(/^(?:\.\/|\/wiki\/)([^#?]+)/);
+      if (!m) return;
+      var n; try { n = decodeURIComponent(m[1]).replace(/_/g, " "); } catch (e) { return; }
+      if (n.indexOf(":") >= 0) return;
+      addOut(out, seen, n, title);
+    });
+    return out;
+  }
   function leadLinks(title) {
     var k = gkey(S.lang, title);
     if (cacheLinks[k]) return Promise.resolve(cacheLinks[k]);
-    var url = base() + "/w/api.php?action=parse&page=" + encodeURIComponent(title) + "&prop=links&section=0&redirects=1&format=json&formatversion=2&origin=*";
-    return api(url).then(function (j) {
-      var seen = {}, out = [];
-      ((j.parse && j.parse.links) || []).forEach(function (l) {
-        if (l.ns !== 0 || l.exists === false) return;
-        var n = l.title;
-        if (!n || seen[n] || n === title || NOISE.test(n)) return;
-        seen[n] = 1; out.push(n);
-      });
-      out = out.slice(0, 12);
-      cacheLinks[k] = out;
+    var q = base() + "/w/api.php?action=parse&page=" + encodeURIComponent(title) + "&redirects=1&format=json&formatversion=2&origin=*";
+    return api(q + "&prop=text&section=0&disableeditsection=1&disabletoc=1").then(function (j) {
+      return htmlLinks((j.parse && j.parse.text) || "", title);
+    }).catch(function () { return []; }).then(function (lead) {
+      if (lead.length >= 6) return lead;
+      return api(q + "&prop=links").then(function (j) {
+        var seen = {}, out = lead.slice(); out.forEach(function (n) { seen[n] = 1; });
+        ((j.parse && j.parse.links) || []).forEach(function (l) {
+          if (l.ns !== 0 || l.exists === false) return;
+          addOut(out, seen, l.title, title);
+        });
+        return out;
+      }).catch(function () { return lead; });
+    }).then(function (out) {
+      if (out.length >= 6) return out;
+      return api(base() + "/w/api.php?action=query&list=search&srsearch=" + encodeURIComponent("morelike:" + title) + "&srlimit=12&srnamespace=0&format=json&formatversion=2&origin=*").then(function (j) {
+        var seen = {}; out.forEach(function (n) { seen[n] = 1; });
+        ((j.query && j.query.search) || []).forEach(function (r) { addOut(out, seen, r.title, title); });
+        return out;
+      }).catch(function () { return out; });
+    }).then(function (out) {
+      out = out.slice(0, 14);
+      if (out.length) cacheLinks[k] = out;
       return out;
     });
   }
