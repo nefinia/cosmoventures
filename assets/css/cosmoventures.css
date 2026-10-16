@@ -216,3 +216,6 @@ nav.site li a[aria-current="page"]{color:var(--ink)}
 @media (max-width:820px){.case-grid,.own{grid-template-columns:1fr}.case dl div{grid-template-columns:1fr;gap:2px}}
 .tool .use{font-size:14.5px;color:var(--dim);margin:10px 0 0;padding-top:10px;border-top:1px solid var(--line)}
 .tool .use span{font-family:var(--mono);font-size:12px;letter-spacing:.03em;color:var(--glow);display:block;margin-bottom:2px}
+.angle-text{max-width:760px;display:grid;gap:18px}
+.angle-text p{margin:0;font-size:18px;line-height:1.65;color:var(--ink)}
+.angle-text p+p{color:var(--dim)}
