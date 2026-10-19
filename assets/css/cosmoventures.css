@@ -219,3 +219,6 @@ nav.site li a[aria-current="page"]{color:var(--ink)}
 .angle-text{max-width:760px;display:grid;gap:18px}
 .angle-text p{margin:0;font-size:18px;line-height:1.65;color:var(--ink)}
 .angle-text p+p{color:var(--dim)}
+.case .case-links{margin:auto 0 0;padding-top:18px;display:flex;flex-wrap:wrap;gap:6px 20px}
+.case .case-links:empty{display:none}
+.case .case-links .more{margin:0;padding:0}
